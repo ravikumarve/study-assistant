@@ -216,7 +216,7 @@ Mobile view activated... 📱
    ```
 
 4. **Open your browser**
-   Navigate to `http://localhost:8002` (or check available port)
+   Navigate to `http://localhost:8001`
 
 ### 🐳 Docker Deployment (Alternative)
 

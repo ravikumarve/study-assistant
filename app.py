@@ -45,6 +45,12 @@ app = Flask(__name__)
 app.config["TESTING"] = os.getenv("FLASK_DEBUG", "false").lower() == "true"
 
 
+# Serve main application
+@app.route("/")
+def serve_index():
+    return app.send_static_file("index.html")
+
+
 # Custom exceptions
 class OllamaError(Exception):
     """Raised for all Ollama failures. Message is user-safe."""
