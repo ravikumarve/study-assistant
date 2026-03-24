@@ -216,7 +216,7 @@ Mobile view activated... 📱
    ```
 
 4. **Open your browser**
-   Navigate to `http://localhost:8001`
+   Navigate to `http://localhost:8002` (or check available port)
 
 ### 🐳 Docker Deployment (Alternative)
 
@@ -497,7 +497,7 @@ curl http://localhost:11434/api/tags
 
 3. **Port 5000 in use (macOS)**
    ```bash
-   PORT=8002 python app.py
+   PORT=8003 python app.py
    ```
 
 4. **Database locked**
