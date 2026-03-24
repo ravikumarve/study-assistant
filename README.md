@@ -1,17 +1,43 @@
 # Advanced AI Study Assistant Pro
 
+<div align="center">
+
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
+![Flask](https://img.shields.io/badge/Flask-2.3%2B-green)
+![Ollama](https://img.shields.io/badge/Ollama-Local%20AI-orange)
+![License](https://img.shields.io/badge/License-MIT-brightgreen)
+![Privacy](https://img.shields.io/badge/Privacy-First-critical)
+
 A privacy-first, offline-capable AI learning platform built with Flask and vanilla JavaScript. This study assistant provides intelligent learning tools while keeping your data local and secure.
+
+[🚀 Quick Start](#-quick-start) • [✨ Features](#-features) • [🛡️ Privacy](#️-privacy-first) • [📊 Implementation Status](#-implementation-status)
+
+</div>
 
 ## ✨ Features
 
-- **AI-Powered Explanations**: Get detailed explanations on any topic with examples, analogies, and key concepts
-- **Interactive Quizzes**: Generate customized quizzes with multiple difficulty levels
-- **Smart Flashcards**: Create and study with intelligent flashcards
-- **Study Plans**: Generate personalized study schedules
-- **Mind Maps**: Visualize concepts with structured mind maps
-- **Note Summarization**: Summarize and extract key points from your notes
-- **AI Chat**: Conversational learning assistant
-- **Progress Tracking**: Monitor your learning journey with detailed analytics
+| Feature | Description | Status |
+|---------|-------------|---------|
+| 🤖 AI Explanations | Detailed explanations with examples and analogies | ✅ Complete |
+| 📝 Interactive Quizzes | Customized quizzes with multiple difficulty levels | ✅ Complete |
+| 🎴 Smart Flashcards | Intelligent flashcards with spaced repetition | ✅ Complete |
+| 📅 Study Plans | Personalized study schedules and timelines | ✅ Complete |
+| 🧠 Mind Maps | Visual concept mapping and organization | ✅ Complete |
+| 📋 Note Summarization | Automatic summarization of study notes | ✅ Complete |
+| 💬 AI Chat | Conversational learning assistant | ✅ Complete |
+| 📊 Progress Tracking | Detailed learning analytics and statistics | ✅ Complete |
+| 🔒 Privacy First | Local AI processing, no data leaves your device | ✅ Complete |
+| 🐳 Docker Support | Containerized deployment with Docker | ✅ Complete |
+
+## 🎥 Quick Demo
+
+```bash
+# See it in action (requires Ollama)
+git clone https://github.com/ravikumarve/study-assistant.git
+cd study-assistant
+./deploy.sh
+# Open http://localhost:5000
+```
 
 ## 🛡️ Privacy First
 
