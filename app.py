@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 from functools import wraps
 
 import bleach
-from flask import Flask, request, jsonify, g
+from flask import Flask, jsonify, g
 
 # Configuration constants
 MAX_TOPIC_LENGTH = 200
@@ -176,9 +176,7 @@ def make_cache_key(endpoint: str, params: dict) -> str:
 def cache_get(key: str) -> dict | None:
     """Get cached value or None. Lazily deletes expired entries."""
     conn = get_db()
-    row = conn.execute(
-        "SELECT value, expires_at FROM cache WHERE key = ?", (key,)
-    ).fetchone()
+    row = conn.execute("SELECT value, expires_at FROM cache WHERE key = ?", (key,)).fetchone()
 
     if row is None:
         return None
@@ -222,7 +220,9 @@ def check_rate_limit(session_token: str) -> bool:
     if not session:
         # New session
         conn.execute(
-            "INSERT INTO study_sessions (session_token, started_at, last_active, activity_count) VALUES (?, ?, ?, 1)",
+            "INSERT INTO study_sessions "
+            "(session_token, started_at, last_active, activity_count) "
+            "VALUES (?, ?, ?, 1)",
             (session_token, current_time, current_time),
         )
         conn.commit()
@@ -233,7 +233,9 @@ def check_rate_limit(session_token: str) -> bool:
     if (current_time - last_active).total_seconds() >= 60:
         # Reset counter
         conn.execute(
-            "UPDATE study_sessions SET activity_count = 1, last_active = ? WHERE session_token = ?",
+            "UPDATE study_sessions SET "
+            "activity_count = 1, last_active = ? "
+            "WHERE session_token = ?",
             (current_time, session_token),
         )
         conn.commit()
@@ -245,7 +247,9 @@ def check_rate_limit(session_token: str) -> bool:
 
     # Increment counter
     conn.execute(
-        "UPDATE study_sessions SET activity_count = activity_count + 1, last_active = ? WHERE session_token = ?",
+        "UPDATE study_sessions SET "
+        "activity_count = activity_count + 1, "
+        "last_active = ? WHERE session_token = ?",
         (current_time, session_token),
     )
     conn.commit()
@@ -293,16 +297,12 @@ def call_ollama(prompt: str, model: str = None, max_tokens: int = 1000) -> str:
             return r.json()["response"].strip()
         except requests.Timeout:
             if attempt == OLLAMA_MAX_RETRIES:
-                raise OllamaError(
-                    f"Ollama timed out after {OLLAMA_TIMEOUT}s. Try a smaller model."
-                )
+                raise OllamaError(f"Ollama timed out after {OLLAMA_TIMEOUT}s. Try a smaller model.")
             time.sleep(attempt * 2)
         except requests.ConnectionError:
             raise OllamaError("Ollama is not running. Start it with: ollama serve")
         except KeyError:
-            raise OllamaError(
-                "Unexpected response format from Ollama. Check your Ollama version."
-            )
+            raise OllamaError("Unexpected response format from Ollama. Check your Ollama version.")
         except Exception as e:
             raise OllamaError(f"Ollama error: {type(e).__name__}")
 
@@ -316,32 +316,34 @@ def handle_errors(f):
         try:
             return f(*args, **kwargs)
         except ValidationError as e:
-            return jsonify(
-                {"success": False, "error": str(e), "code": "INVALID_INPUT"}
-            ), 400
+            return jsonify({"success": False, "error": str(e), "code": "INVALID_INPUT"}), 400
         except RateLimitError as e:
-            return jsonify(
-                {
-                    "success": False,
-                    "error": str(e),
-                    "code": "RATE_LIMITED",
-                    "retry_after": 60,
-                }
-            ), 429
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "error": str(e),
+                        "code": "RATE_LIMITED",
+                        "retry_after": 60,
+                    }
+                ),
+                429,
+            )
         except OllamaError as e:
-            return jsonify(
-                {"success": False, "error": str(e), "code": "OLLAMA_UNAVAILABLE"}
-            ), 503
+            return jsonify({"success": False, "error": str(e), "code": "OLLAMA_UNAVAILABLE"}), 503
         except Exception as e:
             # Log internal errors but don't expose details
             app.logger.error(f"Internal error: {e}")
-            return jsonify(
-                {
-                    "success": False,
-                    "error": "Internal server error",
-                    "code": "INTERNAL_ERROR",
-                }
-            ), 500
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "error": "Internal server error",
+                        "code": "INTERNAL_ERROR",
+                    }
+                ),
+                500,
+            )
 
     return decorated_function
 
