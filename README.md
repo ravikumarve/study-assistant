@@ -54,6 +54,14 @@ A privacy-first, offline-capable AI learning platform built with Flask and vanil
 - Cache indicators and toast notifications
 - Documentation completion
 
+### ✅ Phase 4 Complete - Production Deployment
+- Docker containerization with health checks
+- Production deployment scripts
+- Performance optimizations (database indexes)
+- Advanced monitoring and logging
+- Production environment configuration
+- Comprehensive testing verification
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -88,6 +96,23 @@ A privacy-first, offline-capable AI learning platform built with Flask and vanil
 
 4. **Open your browser**
    Navigate to `http://localhost:5000`
+
+### 🐳 Docker Deployment (Alternative)
+
+1. **Build and start with Docker Compose**
+   ```bash
+   ./deploy.sh
+   ```
+
+2. **Or manually with Docker Compose**
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **Monitor the deployment**
+   ```bash
+   ./monitor.sh
+   ```
 
 ### Getting Started with Phase 1
 
@@ -369,6 +394,31 @@ curl http://localhost:11434/api/tags
 - No raw exception messages exposed to clients
 - Rate limiting prevents abuse
 - Session tokens are UUIDs with expiration
+
+## 🐳 Docker Deployment
+
+The application supports Docker deployment for production environments:
+
+### Quick Deployment
+```bash
+./deploy.sh
+```
+
+### Manual Deployment
+```bash
+docker-compose up -d
+```
+
+### Monitoring
+```bash
+./monitor.sh
+```
+
+### Configuration
+- Uses `docker-compose.yml` for multi-container setup
+- Includes Ollama service for local AI processing
+- Health checks and automatic restarts
+- Volume mounts for persistent data
 
 ## 📈 Performance
 

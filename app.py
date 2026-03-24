@@ -96,6 +96,10 @@ def db_init():
         )
     """)
 
+    # Create indexes for cache table
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_cache_key ON cache(key)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_cache_expires ON cache(expires_at)")
+
     # User progress table
     conn.execute("""
         CREATE TABLE IF NOT EXISTS user_progress (
@@ -108,6 +112,14 @@ def db_init():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+
+    # Create indexes for user progress table
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_progress_topic ON user_progress(topic)"
+    )
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_progress_created ON user_progress(created_at)"
+    )
 
     # Study sessions table
     conn.execute("""
@@ -174,16 +186,16 @@ def make_cache_key(endpoint: str, params: dict) -> str:
 
 
 def cache_get(key: str) -> dict | None:
-    """Get cached value or None. Lazily deletes expired entries."""
+    """Get cached value or None."""
     conn = get_db()
-    row = conn.execute("SELECT value, expires_at FROM cache WHERE key = ?", (key,)).fetchone()
+    row = conn.execute(
+        "SELECT value, expires_at FROM cache WHERE key = ?", (key,)
+    ).fetchone()
 
     if row is None:
         return None
 
     if datetime.fromisoformat(row["expires_at"]) < datetime.utcnow():
-        conn.execute("DELETE FROM cache WHERE key = ?", (key,))
-        conn.commit()
         return None
 
     return json.loads(row["value"])
@@ -203,6 +215,19 @@ def cache_set(key: str, value: dict, ttl_hours: int = CACHE_TTL_HOURS) -> None:
         conn.commit()
     except Exception:
         pass  # Cache write failure is non-fatal
+
+
+def cache_cleanup():
+    """Clean up expired cache entries. Runs periodically."""
+    conn = get_db()
+    try:
+        result = conn.execute(
+            "DELETE FROM cache WHERE expires_at < ?", (datetime.utcnow().isoformat(),)
+        )
+        conn.commit()
+        return result.rowcount
+    except Exception:
+        return 0
 
 
 # Rate limiting
@@ -297,12 +322,16 @@ def call_ollama(prompt: str, model: str = None, max_tokens: int = 1000) -> str:
             return r.json()["response"].strip()
         except requests.Timeout:
             if attempt == OLLAMA_MAX_RETRIES:
-                raise OllamaError(f"Ollama timed out after {OLLAMA_TIMEOUT}s. Try a smaller model.")
+                raise OllamaError(
+                    f"Ollama timed out after {OLLAMA_TIMEOUT}s. Try a smaller model."
+                )
             time.sleep(attempt * 2)
         except requests.ConnectionError:
             raise OllamaError("Ollama is not running. Start it with: ollama serve")
         except KeyError:
-            raise OllamaError("Unexpected response format from Ollama. Check your Ollama version.")
+            raise OllamaError(
+                "Unexpected response format from Ollama. Check your Ollama version."
+            )
         except Exception as e:
             raise OllamaError(f"Ollama error: {type(e).__name__}")
 
@@ -316,7 +345,9 @@ def handle_errors(f):
         try:
             return f(*args, **kwargs)
         except ValidationError as e:
-            return jsonify({"success": False, "error": str(e), "code": "INVALID_INPUT"}), 400
+            return jsonify(
+                {"success": False, "error": str(e), "code": "INVALID_INPUT"}
+            ), 400
         except RateLimitError as e:
             return (
                 jsonify(
@@ -330,7 +361,9 @@ def handle_errors(f):
                 429,
             )
         except OllamaError as e:
-            return jsonify({"success": False, "error": str(e), "code": "OLLAMA_UNAVAILABLE"}), 503
+            return jsonify(
+                {"success": False, "error": str(e), "code": "OLLAMA_UNAVAILABLE"}
+            ), 503
         except Exception as e:
             # Log internal errors but don't expose details
             app.logger.error(f"Internal error: {e}")
@@ -564,7 +597,9 @@ def parse_ai_response(response_text: str) -> dict:
 
         # Fix common formatting issues
         clean_text = re.sub(r",\s*\}", "}", clean_text)  # Remove trailing commas
-        clean_text = re.sub(r",\s*\]", "]", clean_text)  # Remove trailing commas in arrays
+        clean_text = re.sub(
+            r",\s*\]", "]", clean_text
+        )  # Remove trailing commas in arrays
         clean_text = re.sub(r"'\s*:", '":', clean_text)  # Fix single quotes to double
         clean_text = re.sub(r":\s*'", ':"', clean_text)  # Fix single quotes to double
 
@@ -592,7 +627,9 @@ def call_ai_endpoint(endpoint: str, params: dict, prompt_template: str) -> dict:
     # Check Ollama availability
     available, _ = check_ollama()
     if not available:
-        raise OllamaError("Ollama is not available. Please start Ollama with: ollama serve")
+        raise OllamaError(
+            "Ollama is not available. Please start Ollama with: ollama serve"
+        )
 
     # Prepare prompt
     prompt = prompt_template.format(**params)
@@ -627,7 +664,9 @@ def explain_topic():
     topic = validate_topic(data.get("topic"))
     level = validate_level(data.get("level"))
 
-    result = call_ai_endpoint("/api/explain", {"topic": topic, "level": level}, EXPLAIN_PROMPT)
+    result = call_ai_endpoint(
+        "/api/explain", {"topic": topic, "level": level}, EXPLAIN_PROMPT
+    )
 
     return jsonify(
         {
@@ -672,7 +711,9 @@ def generate_flashcards():
     topic = validate_topic(data.get("topic"))
     count = validate_count(data.get("count"), 5, 20, 10)
 
-    result = call_ai_endpoint("/api/flashcards", {"topic": topic, "count": count}, FLASHCARD_PROMPT)
+    result = call_ai_endpoint(
+        "/api/flashcards", {"topic": topic, "count": count}, FLASHCARD_PROMPT
+    )
 
     return jsonify(
         {
@@ -743,7 +784,9 @@ def summarize_notes():
     cache_key = make_cache_key("/api/summarize", {"notes": notes, "format": format})
     cached = cache_get(cache_key)
     if cached:
-        return jsonify({"success": True, "data": cached, "cached": True, "provider": "ollama"})
+        return jsonify(
+            {"success": True, "data": cached, "cached": True, "provider": "ollama"}
+        )
 
     # Check rate limiting
     session_token = request.headers.get("X-Session-Token")
@@ -753,7 +796,9 @@ def summarize_notes():
     # Check Ollama availability
     available, _ = check_ollama()
     if not available:
-        raise OllamaError("Ollama is not available. Please start Ollama with: ollama serve")
+        raise OllamaError(
+            "Ollama is not available. Please start Ollama with: ollama serve"
+        )
 
     # Prepare prompt
     prompt = SUMMARY_PROMPT.format(notes=notes, format=format)
@@ -776,7 +821,9 @@ def summarize_notes():
         )
         conn.commit()
 
-    return jsonify({"success": True, "data": ai_data, "cached": False, "provider": "ollama"})
+    return jsonify(
+        {"success": True, "data": ai_data, "cached": False, "provider": "ollama"}
+    )
 
 
 @app.route("/api/chat", methods=["POST"])
@@ -800,7 +847,9 @@ def chat_assistant():
 
     available, _ = check_ollama()
     if not available:
-        raise OllamaError("Ollama is not available. Please start Ollama with: ollama serve")
+        raise OllamaError(
+            "Ollama is not available. Please start Ollama with: ollama serve"
+        )
 
     prompt = CHAT_PROMPT.format(message=message, history=json.dumps(history))
     response_text = call_ollama(prompt)
@@ -815,7 +864,9 @@ def chat_assistant():
         )
         conn.commit()
 
-    return jsonify({"success": True, "data": ai_data, "cached": False, "provider": "ollama"})
+    return jsonify(
+        {"success": True, "data": ai_data, "cached": False, "provider": "ollama"}
+    )
 
 
 @app.route("/api/progress", methods=["GET"])
@@ -855,7 +906,9 @@ def get_progress():
             "success": True,
             "data": {
                 "recent_activities": [dict(act) for act in activities],
-                "activity_breakdown": {act["activity"]: act["count"] for act in breakdown},
+                "activity_breakdown": {
+                    act["activity"]: act["count"] for act in breakdown
+                },
                 "streak_days": streak["streak"] if streak else 0,
             },
         }
@@ -872,7 +925,9 @@ def log_progress():
     score = data.get("score")
 
     if activity not in VALID_ACTIVITIES:
-        raise ValidationError(f"Invalid activity. Must be one of: {list(VALID_ACTIVITIES)}")
+        raise ValidationError(
+            f"Invalid activity. Must be one of: {list(VALID_ACTIVITIES)}"
+        )
 
     conn = get_db()
     conn.execute(
@@ -887,8 +942,39 @@ def log_progress():
 if __name__ == "__main__":
     with app.app_context():
         db_init()
+        # Clean up expired cache entries on startup
+        cleaned = cache_cleanup()
+        if cleaned > 0:
+            print(f"Cleaned up {cleaned} expired cache entries")
 
     port = int(os.getenv("PORT", "5000"))
     debug = os.getenv("FLASK_DEBUG", "false").lower() == "true"
 
     app.run(host="0.0.0.0", port=port, debug=debug)
+
+
+def create_app(config=None):
+    """Application factory function for testing."""
+    # Create a new Flask app instance
+    new_app = Flask(__name__)
+
+    if config:
+        new_app.config.update(config)
+    else:
+        new_app.config["TESTING"] = os.getenv("FLASK_DEBUG", "false").lower() == "true"
+
+    # Import and register all routes from the global app to the new app
+    from flask import current_app
+
+    # Copy all routes from the global app to the new app
+    for rule in app.url_map.iter_rules():
+        if rule.endpoint != "static":
+            view_func = app.view_functions[rule.endpoint]
+            new_app.add_url_rule(
+                rule.rule,
+                endpoint=rule.endpoint,
+                view_func=极view_func,
+                methods=rule.methods,
+            )
+
+    return new_app

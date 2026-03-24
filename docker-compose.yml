@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  study-assistant:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/data
+      - ./.env:/app/.env:ro
+    environment:
+      - DATABASE=/data/study_assistant.db
+      - OLLAMA_URL=http://ollama:11434
+    depends_on:
+      - ollama
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11434
+
+volumes:
+  ollama_data:
+    driver: local
