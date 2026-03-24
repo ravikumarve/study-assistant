@@ -828,7 +828,7 @@ Before marking any task complete:
 
 - [x] **Phase 1 Complete** - Core Infrastructure
   - [x] Flask application with SQLite database setup
-  - [x] Database schema (cache, user_progress, study_sessions)
+  - [极] Database schema (cache, user_progress, study_sessions)
   - [x] Input validation with bleach sanitization
   - [x] Cache system with SHA256 keys and TTL
   - [x] Rate limiting system (30 requests/minute)
@@ -839,13 +839,22 @@ Before marking any task complete:
   - [x] Setup script
   - [x] Comprehensive documentation
 
+- [x] **Phase 2 Complete** - Ollama Integration
+  - [x] All 7 AI endpoints implemented
+  - [x] Comprehensive prompt templates
+  - [x] Robust JSON parsing from AI responses
+  - [x] Caching for all AI endpoints
+  - [x] Progress logging system
+  - [x] Ollama error handling
+  - [x] Complete testing with mock responses
+
 - [x] `pytest tests/ -q` — all tests pass
 - [x] `pytest --cov=app --cov-report=term-missing` — coverage ≥ 85%
 - [x] `flake8 app.py --max-line-length 100` — zero warnings
 - [x] `black --check app.py --line-length 100` — already formatted
-- [ ] Input validated on any new endpoint
-- [ ] Cache implemented (check + write) on any new AI endpoint
-- [ ] Progress logged on successful AI response
+- [x] Input validated on any new endpoint
+- [x] Cache implemented (check + write) on any new AI endpoint
+- [x] Progress logged on successful AI response
 - [ ] Dark mode tested manually at `[data-theme="dark"]`
 - [ ] Mobile layout verified at 375px viewport
 - [ ] Ollama-down scenario tested: stop Ollama, hit endpoint, verify structured error not 500
