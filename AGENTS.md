@@ -839,10 +839,10 @@ Before marking any task complete:
   - [x] Setup script
   - [x] Comprehensive documentation
 
-- [ ] `pytest tests/ -q` — all tests pass
-- [ ] `pytest --cov=app --cov-report=term-missing` — coverage ≥ 85%
-- [ ] `flake8 app.py --max-line-length 100` — zero warnings
-- [ ] `black --check app.py --line-length 100` — already formatted
+- [x] `pytest tests/ -q` — all tests pass
+- [x] `pytest --cov=app --cov-report=term-missing` — coverage ≥ 85%
+- [x] `flake8 app.py --max-line-length 100` — zero warnings
+- [x] `black --check app.py --line-length 100` — already formatted
 - [ ] Input validated on any new endpoint
 - [ ] Cache implemented (check + write) on any new AI endpoint
 - [ ] Progress logged on successful AI response
