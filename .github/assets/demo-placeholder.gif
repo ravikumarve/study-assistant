@@ -1,0 +1,4 @@
+GIF Placeholder - Real demo recording will be added here
+
+Use `peek` or OBS to record a screen capture of the application in action,
+then convert to GIF using ffmpeg and optimize with gifsicle.
