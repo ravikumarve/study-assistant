@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 from functools import wraps
 
 import bleach
-from flask import Flask, jsonify, g
+from flask import Flask, request, jsonify, g
 
 # Configuration constants
 MAX_TOPIC_LENGTH = 200
@@ -376,7 +376,514 @@ def ollama_status():
     )
 
 
-# Main application entry
+# AI Prompt Templates
+EXPLAIN_PROMPT = """
+Create a comprehensive explanation for a {level} learner about: {topic}
+
+Please provide:
+1. A clear, concise explanation
+2. 2-3 practical examples
+3. 3-5 key concepts to remember
+4. 1-2 helpful analogies
+5. Common misconceptions to avoid
+
+Format the response as valid JSON with these exact keys:
+{{
+  "explanation": "string",
+  "examples": ["string1", "string2", ...],
+  "key_concepts": ["string1", "string2", ...],
+  "analogies": ["string1", "string2", ...],
+  "misconceptions": ["string1", "string2", ...]
+}}
+"""
+
+QUIZ_PROMPT = """
+Create a {count}-question quiz about {topic} at {difficulty} difficulty level.
+
+For each question, provide:
+- A clear question
+- 4 multiple choice options (A, B, C, D)
+- The correct answer (letter only)
+- A brief explanation
+- An optional hint
+
+Format as valid JSON with this structure:
+{{
+  "questions": [
+    {{
+      "question": "string",
+      "options": ["A: option1", "B: option2", "C: option3", "D: option4"],
+      "answer": "A",
+      "explanation": "string",
+      "hint": "string"
+    }}
+  ]
+}}
+"""
+
+FLASHCARD_PROMPT = """
+Create {count} flashcards about {topic}.
+
+Each flashcard should have:
+- Front: Question or term
+- Back: Detailed explanation or definition
+- Difficulty level (easy, medium, hard)
+- Color category for organization
+
+Format as valid JSON:
+{{
+  "cards": [
+    {{
+      "front": "string",
+      "back": "string",
+      "difficulty": "easy|medium|hard",
+      "color": "blue|green|red|purple|orange"
+    }}
+  ]
+}}
+"""
+
+STUDY_PLAN_PROMPT = """
+Create a {days}-day study plan for learning {topic} with {hours_per_day} hours per day.
+
+For each day, include:
+- Specific learning tasks
+- Milestones to achieve
+- Recommended resources
+- Time allocation suggestions
+
+Format as valid JSON:
+{{
+  "plan": [
+    {{
+      "day": 1,
+      "tasks": ["string1", "string2", ...],
+      "milestones": ["string1", "string2", ...],
+      "resources": ["string1", "string2", ...]
+    }}
+  ]
+}}
+"""
+
+MIND_MAP_PROMPT = """
+Create a mind map structure for {topic}.
+
+Include:
+- Central concept
+- Main branches with labels and colors
+- Sub-branches with children
+- Logical organization
+
+Format as valid JSON:
+{{
+  "center": "string",
+  "branches": [
+    {{
+      "label": "string",
+      "color": "blue|green|red|purple|orange|yellow",
+      "children": ["string1", "string2", ...]
+    }}
+  ]
+}}
+"""
+
+SUMMARY_PROMPT = """
+Summarize the following notes in {format} format:
+
+{notes}
+
+Provide:
+- Concise summary
+- Key points
+- Format used
+
+Format as valid JSON:
+{{
+  "summary": "string",
+  "key_points": ["string1", "string2", ...],
+  "format_used": "bullet|paragraph|outline|cornell"
+}}
+"""
+
+CHAT_PROMPT = """
+You are a helpful study assistant. Continue the conversation:
+
+Previous messages:
+{history}
+
+User message: {message}
+
+Respond helpfully and suggest 2-3 follow-up questions.
+
+Format as valid JSON:
+{{
+  "response": "string",
+  "suggestions": ["string1", "string2", ...]
+}}
+"""
+
+
+def parse_ai_response(response_text: str) -> dict:
+    """Parse AI response and extract JSON, with fallback handling."""
+    import re
+
+    # First, try to parse the entire text as JSON
+    try:
+        return json.loads(response_text.strip())
+    except json.JSONDecodeError:
+        pass
+
+    # Try to extract JSON from markdown code blocks
+    try:
+        # Remove markdown code blocks
+        clean_text = re.sub(r"```(?:json)?\s*", "", response_text)
+        clean_text = re.sub(r"\s*```", "", clean_text)
+        clean_text = clean_text.strip()
+
+        # Try to parse cleaned text
+        return json.loads(clean_text)
+    except json.JSONDecodeError:
+        pass
+
+    # Try to find JSON object pattern
+    try:
+        json_match = re.search(r"\{[^{}]*\}", response_text, re.DOTALL)
+        if json_match:
+            return json.loads(json_match.group())
+    except json.JSONDecodeError:
+        pass
+
+    # Final fallback: try to clean and parse
+    try:
+        clean_text = response_text.strip()
+        # Remove any non-JSON content before {
+        clean_text = clean_text[clean_text.find("{") :]
+        # Remove any non-JSON content after }
+        if "}" in clean_text:
+            clean_text = clean_text[: clean_text.rfind("}") + 1]
+
+        # Fix common formatting issues
+        clean_text = re.sub(r",\s*\}", "}", clean_text)  # Remove trailing commas
+        clean_text = re.sub(r",\s*\]", "]", clean_text)  # Remove trailing commas in arrays
+        clean_text = re.sub(r"'\s*:", '":', clean_text)  # Fix single quotes to double
+        clean_text = re.sub(r":\s*'", ':"', clean_text)  # Fix single quotes to double
+
+        return json.loads(clean_text)
+    except (json.JSONDecodeError, ValueError):
+        raise ValidationError("AI response could not be parsed as valid JSON")
+
+
+def call_ai_endpoint(endpoint: str, params: dict, prompt_template: str) -> dict:
+    """Common function to handle AI endpoint calls with caching."""
+    # Validate input
+    topic = validate_topic(params.get("topic", ""))
+
+    # Check cache first
+    cache_key = make_cache_key(endpoint, params)
+    cached = cache_get(cache_key)
+    if cached:
+        return {"data": cached, "cached": True}
+
+    # Check rate limiting
+    session_token = request.headers.get("X-Session-Token")
+    if not session_token or not check_rate_limit(session_token):
+        raise RateLimitError("Rate limit exceeded. Please try again in a minute.")
+
+    # Check Ollama availability
+    available, _ = check_ollama()
+    if not available:
+        raise OllamaError("Ollama is not available. Please start Ollama with: ollama serve")
+
+    # Prepare prompt
+    prompt = prompt_template.format(**params)
+
+    # Call Ollama
+    response_text = call_ollama(prompt)
+
+    # Parse response
+    ai_data = parse_ai_response(response_text)
+
+    # Cache successful response
+    cache_set(cache_key, ai_data)
+
+    # Log progress
+    if session_token:
+        conn = get_db()
+        conn.execute(
+            "INSERT INTO user_progress (topic, activity, metadata) VALUES (?, ?, ?)",
+            (topic, endpoint.replace("/api/", ""), json.dumps({"params": params})),
+        )
+        conn.commit()
+
+    return {"data": ai_data, "cached": False}
+
+
+# Core AI Endpoints
+@app.route("/api/explain", methods=["POST"])
+@handle_errors
+def explain_topic():
+    """Get detailed explanation of a topic."""
+    data = request.get_json()
+    topic = validate_topic(data.get("topic"))
+    level = validate_level(data.get("level"))
+
+    result = call_ai_endpoint("/api/explain", {"topic": topic, "level": level}, EXPLAIN_PROMPT)
+
+    return jsonify(
+        {
+            "success": True,
+            "data": result["data"],
+            "cached": result["cached"],
+            "provider": "ollama",
+        }
+    )
+
+
+@app.route("/api/quiz", methods=["POST"])
+@handle_errors
+def generate_quiz():
+    """Generate quiz questions on a topic."""
+    data = request.get_json()
+    topic = validate_topic(data.get("topic"))
+    count = validate_count(data.get("count"), 3, 10, 5)
+    difficulty = data.get("difficulty", "medium")
+
+    result = call_ai_endpoint(
+        "/api/quiz",
+        {"topic": topic, "count": count, "difficulty": difficulty},
+        QUIZ_PROMPT,
+    )
+
+    return jsonify(
+        {
+            "success": True,
+            "data": result["data"],
+            "cached": result["cached"],
+            "provider": "ollama",
+        }
+    )
+
+
+@app.route("/api/flashcards", methods=["POST"])
+@handle_errors
+def generate_flashcards():
+    """Generate flashcards for a topic."""
+    data = request.get_json()
+    topic = validate_topic(data.get("topic"))
+    count = validate_count(data.get("count"), 5, 20, 10)
+
+    result = call_ai_endpoint("/api/flashcards", {"topic": topic, "count": count}, FLASHCARD_PROMPT)
+
+    return jsonify(
+        {
+            "success": True,
+            "data": result["data"],
+            "cached": result["cached"],
+            "provider": "ollama",
+        }
+    )
+
+
+@app.route("/api/study-plan", methods=["POST"])
+@handle_errors
+def generate_study_plan():
+    """Generate study plan for a topic."""
+    data = request.get_json()
+    topic = validate_topic(data.get("topic"))
+    days = validate_count(data.get("days"), 1, 30, 7)
+    hours_per_day = validate_count(data.get("hours_per_day"), 1, 8, 2)
+
+    result = call_ai_endpoint(
+        "/api/study-plan",
+        {"topic": topic, "days": days, "hours_per_day": hours_per_day},
+        STUDY_PLAN_PROMPT,
+    )
+
+    return jsonify(
+        {
+            "success": True,
+            "data": result["data"],
+            "cached": result["cached"],
+            "provider": "ollama",
+        }
+    )
+
+
+@app.route("/api/mind-map", methods=["POST"])
+@handle_errors
+def generate_mind_map():
+    """Generate mind map for a topic."""
+    data = request.get_json()
+    topic = validate_topic(data.get("topic"))
+
+    result = call_ai_endpoint("/api/mind-map", {"topic": topic}, MIND_MAP_PROMPT)
+
+    return jsonify(
+        {
+            "success": True,
+            "data": result["data"],
+            "cached": result["cached"],
+            "provider": "ollama",
+        }
+    )
+
+
+@app.route("/api/summarize", methods=["POST"])
+@handle_errors
+def summarize_notes():
+    """Summarize provided notes."""
+    data = request.get_json()
+    notes = validate_notes(data.get("notes"))
+    format = data.get("format", "bullet")
+
+    if format not in VALID_FORMATS:
+        format = "bullet"
+
+    # Summarize endpoint doesn't use topic, so handle specially
+    cache_key = make_cache_key("/api/summarize", {"notes": notes, "format": format})
+    cached = cache_get(cache_key)
+    if cached:
+        return jsonify({"success": True, "data": cached, "cached": True, "provider": "ollama"})
+
+    # Check rate limiting
+    session_token = request.headers.get("X-Session-Token")
+    if not session_token or not check_rate_limit(session_token):
+        raise RateLimitError("Rate limit exceeded. Please try again in a minute.")
+
+    # Check Ollama availability
+    available, _ = check_ollama()
+    if not available:
+        raise OllamaError("Ollama is not available. Please start Ollama with: ollama serve")
+
+    # Prepare prompt
+    prompt = SUMMARY_PROMPT.format(notes=notes, format=format)
+
+    # Call Ollama
+    response_text = call_ollama(prompt)
+
+    # Parse response
+    ai_data = parse_ai_response(response_text)
+
+    # Cache successful response
+    cache_set(cache_key, ai_data)
+
+    # Log progress
+    if session_token:
+        conn = get_db()
+        conn.execute(
+            "INSERT INTO user_progress (topic, activity, metadata) VALUES (?, ?, ?)",
+            ("notes summary", "summary", json.dumps({"notes_length": len(notes)})),
+        )
+        conn.commit()
+
+    return jsonify({"success": True, "data": ai_data, "cached": False, "provider": "ollama"})
+
+
+@app.route("/api/chat", methods=["POST"])
+@handle_errors
+def chat_assistant():
+    """Conversational chat with study assistant."""
+    data = request.get_json()
+    message = data.get("message", "").strip()
+    history = data.get("history", [])
+
+    if not message:
+        raise ValidationError("Message is required for chat")
+
+    if len(message) > MAX_MESSAGE_LENGTH:
+        raise ValidationError(f"Message must be under {MAX_MESSAGE_LENGTH} characters")
+
+    # Chat is not cached due to conversational context
+    session_token = request.headers.get("X-Session-Token")
+    if not session_token or not check_rate_limit(session_token):
+        raise RateLimitError("Rate limit exceeded. Please try again in a minute.")
+
+    available, _ = check_ollama()
+    if not available:
+        raise OllamaError("Ollama is not available. Please start Ollama with: ollama serve")
+
+    prompt = CHAT_PROMPT.format(message=message, history=json.dumps(history))
+    response_text = call_ollama(prompt)
+    ai_data = parse_ai_response(response_text)
+
+    # Log chat activity (but don't cache)
+    if session_token:
+        conn = get_db()
+        conn.execute(
+            "INSERT INTO user_progress (topic, activity, metadata) VALUES (?, ?, ?)",
+            ("chat conversation", "chat", json.dumps({"message_length": len(message)})),
+        )
+        conn.commit()
+
+    return jsonify({"success": True, "data": ai_data, "cached": False, "provider": "ollama"})
+
+
+@app.route("/api/progress", methods=["GET"])
+@handle_errors
+def get_progress():
+    """Get user progress statistics."""
+    session_token = request.headers.get("X-Session-Token")
+    if not session_token:
+        raise ValidationError("Session token required")
+
+    conn = get_db()
+
+    # Get recent activities
+    activities = conn.execute(
+        "SELECT topic, activity, score, created_at FROM user_progress "
+        "WHERE created_at >= datetime('now', '-7 days') "
+        "ORDER BY created_at DESC LIMIT 20"
+    ).fetchall()
+
+    # Get activity breakdown
+    breakdown = conn.execute(
+        "SELECT activity, COUNT(*) as count FROM user_progress "
+        "WHERE created_at >= datetime('now', '-30 days') "
+        "GROUP BY activity"
+    ).fetchall()
+
+    # Get streak
+    streak = conn.execute(
+        "SELECT COUNT(DISTINCT date(created_at)) as streak "
+        "FROM user_progress "
+        "WHERE created_at >= datetime('now', '-30 days') "
+        "ORDER BY created_at DESC"
+    ).fetchone()
+
+    return jsonify(
+        {
+            "success": True,
+            "data": {
+                "recent_activities": [dict(act) for act in activities],
+                "activity_breakdown": {act["activity"]: act["count"] for act in breakdown},
+                "streak_days": streak["streak"] if streak else 0,
+            },
+        }
+    )
+
+
+@app.route("/api/progress", methods=["POST"])
+@handle_errors
+def log_progress():
+    """Log user progress for an activity."""
+    data = request.get_json()
+    topic = validate_topic(data.get("topic"))
+    activity = data.get("activity", "")
+    score = data.get("score")
+
+    if activity not in VALID_ACTIVITIES:
+        raise ValidationError(f"Invalid activity. Must be one of: {list(VALID_ACTIVITIES)}")
+
+    conn = get_db()
+    conn.execute(
+        "INSERT INTO user_progress (topic, activity, score) VALUES (?, ?, ?)",
+        (topic, activity, score),
+    )
+    conn.commit()
+
+    return jsonify({"success": True, "saved": True})
+
+
 if __name__ == "__main__":
     with app.app_context():
         db_init()
