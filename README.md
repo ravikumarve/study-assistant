@@ -216,7 +216,7 @@ Mobile view activated... 📱
    ```
 
 4. **Open your browser**
-   Navigate to `http://localhost:5000`
+   Navigate to `http://localhost:8001`
 
 ### 🐳 Docker Deployment (Alternative)
 
@@ -241,10 +241,10 @@ The core infrastructure is now complete. You can test the following endpoints:
 
 ```bash
 # Health check
-curl http://localhost:5000/api/health
+curl http://localhost:8001/api/health
 
 # Ollama status
-curl http://localhost:5000/api/ollama/status
+curl http://localhost:8001/api/ollama/status
 
 # Test database (after starting app)
 sqlite3 study_assistant.db ".tables"
@@ -272,17 +272,17 @@ All features are available via REST API:
 
 ```bash
 # Get explanation
-curl -X POST http://localhost:5000/api/explain \
+curl -X POST http://localhost:8001/api/explain \
   -H "Content-Type: application/json" \
   -d '{"topic": "Python programming", "level": "beginner"}'
 
 # Generate quiz
-curl -X POST http://localhost:5000/api/quiz \
+curl -极X POST http://localhost:8001/api/quiz \
   -H "Content-Type: application/json" \
   -d '{"topic": "Calculus", "count": 5, "difficulty": "medium"}'
 
 # Create flashcards
-curl -X POST http://localhost:5000/api/flashcards \
+curl -X POST http://localhost:8001/api/flashcards \
   -H "Content-Type: application/json" \
   -d '{"topic": "French vocabulary", "count": 10}'
 ```
@@ -497,7 +497,7 @@ curl http://localhost:11434/api/tags
 
 3. **Port 5000 in use (macOS)**
    ```bash
-   PORT=5001 python app.py
+   PORT=8002 python app.py
    ```
 
 4. **Database locked**
