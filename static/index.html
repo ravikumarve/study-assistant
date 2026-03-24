@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced AI Study Assistant Pro</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Syne:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">
+                    <span class="logo-icon">🧠</span>
+                    Study Assistant Pro
+                </h1>
+                <div class="header-controls">
+                    <div class="theme-toggle" onclick="toggleTheme()">
+                        <span class="theme-icon">🌙</span>
+                    </div>
+                    <div class="provider-toggle" onclick="toggleProvider()">
+                        <span class="provider-label" id="provider-label">Ollama</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Navigation -->
+            <nav class="sidebar">
+                <div class="nav-items">
+                    <button class="nav-item active" data-feature="explain" onclick="setActiveFeature('explain')">
+                        <span class="nav-icon">📚</span>
+                        Explain
+                    </button>
+                    <button class="nav-item" data-feature="quiz" onclick="setActiveFeature('quiz')">
+                        <span class="nav-icon">❓</span>
+                        Quiz
+                    </button>
+                    <button class="nav-item" data-feature="flashcards" onclick="setActiveFeature('flashcards')">
+                        <span class="nav-icon">🔖</span>
+                        Flashcards
+                    </button>
+                    <button class="nav-item" data-feature="study-plan" onclick="setActiveFeature('study-plan')">
+                        <span class="nav-icon">📅</span>
+                        Study Plan
+                    </button>
+                    <button class="nav-item" data-feature="mind-map" onclick="setActiveFeature('mind-map')">
+                        <span class="nav-icon">🧭</span>
+                        Mind Map
+                    </button>
+                    <button class="nav-item" data-feature="summarize" onclick="setActiveFeature('summarize')">
+                        <span class="nav-icon">📝</span>
+                        Summarize
+                    </button>
+                    <button class="nav-item" data-feature="chat" onclick="setActiveFeature('chat')">
+                        <span class="nav-icon">💬</span>
+                        Chat
+                    </button>
+                    <button class="nav-item" data-feature="progress" onclick="setActiveFeature('progress')">
+                        <span class="nav-icon">📊</span>
+                        Progress
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Loading Overlay -->
+                <div class="loading-overlay" id="loading-overlay">
+                    <div class="loading-spinner"></div>
+                    <p>Generating content...</p>
+                </div>
+
+                <!-- Toast Container -->
+                <div class="toast-container" id="toast-container"></div>
+
+                <!-- Feature Panels -->
+                <div class="feature-panel active" data-feature="explain">
+                    <h2>Get Explanations</h2>
+                    <div class="input-group">
+                        <input type="text" id="explain-topic" placeholder="Enter topic (e.g., Python programming, Calculus)" maxlength="200">
+                        <select id="explain-level">
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                        </select>
+                        <button onclick="generateExplanation()">Explain</button>
+                    </div>
+                    <div class="result-container" id="explain-result"></div>
+                </div>
+
+                <div class="feature-panel" data-feature="quiz">
+                    <h2>Generate Quiz</h2>
+                    <div class="input-group">
+                        <input type="text" id="quiz-topic" placeholder="Enter topic" maxlength="200">
+                        <select id="quiz-count">
+                            <option value="3">3 Questions</option>
+                            <option value="5" selected>5 Questions</option>
+                            <option value="10">10 Questions</option>
+                        </select>
+                        <select id="quiz-difficulty">
+                            <option value="easy">Easy</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                        <button onclick="generateQuiz()">Generate Quiz</button>
+                    </div>
+                    <div class="result-container" id="quiz-result"></div>
+                </div>
+
+                <div class="feature-panel" data-feature="flashcards">
+                    <h2>Create Flashcards</h2>
+                    <div class="input-group">
+                        <input type="text" id="flashcards-topic" placeholder="Enter topic" maxlength="200">
+                        <select id="flashcards-count">
+                            <option value="5">5 Cards</option>
+                            <option value="10" selected>10 Cards</option>
+                            <option value="15">15 Cards</option>
+                            <option value="20">20 Cards</option>
+                        </select>
+                        <button onclick="generateFlashcards()">Create Flashcards</button>
+                    </div>
+                    <div class="flashcards-container" id="flashcards-result"></div>
+                </div>
+
+                <div class="feature-panel" data-feature="study-plan">
+                    <h2>Study Plan Generator</h2>
+                    <div class="input-group">
+                        <input type="text" id="study-plan-topic" placeholder="Enter topic" maxlength="200">
+                        <select id="study-plan-days">
+                            <option value="7">7 Days</option>
+                            <option value="14" selected>14 Days</option>
+                            <option value="30">30 Days</option>
+                        </select>
+                        <select id="study-plan-hours">
+                            <option value="1">1 Hour/Day</option>
+                            <option value="2" selected>2 Hours/Day</option>
+                            <option value="4">4 Hours/Day</option>
+                        </select>
+                        <button onclick="generateStudyPlan()">Generate Plan</button>
+                    </div>
+                    <div class="result-container" id="study-plan-result"></div>
+                </div>
+
+                <div class="feature-panel" data-feature="mind-map">
+                    <h2>Mind Map Generator</h2>
+                    <div class="input-group">
+                        <input type="text" id="mind-map-topic" placeholder="Enter topic" maxlength="200">
+                        <button onclick="generateMindMap()">Generate Mind Map</button>
+                    </div>
+                    <div class="result-container" id="mind-map-result"></div>
+                </div>
+
+                <div class="feature-panel" data-feature="summarize">
+                    <h2>Notes Summarizer</h2>
+                    <div class="input-group vertical">
+                        <textarea id="summarize-notes" placeholder="Paste your notes here..." maxlength="10000" rows="6"></textarea>
+                        <select id="summarize-format">
+                            <option value="bullet">Bullet Points</option>
+                            <option value="paragraph">Paragraph</option>
+                            <option value="outline">Outline</option>
+                            <option value="cornell">Cornell Notes</option>
+                        </select>
+                        <button onclick="summarizeNotes()">Summarize</button>
+                    </div>
+                    <div class="result-container" id="summarize-result"></div>
+                </div>
+
+                <div class="feature-panel" data-feature="chat">
+                    <h2>AI Study Assistant</h2>
+                    <div class="chat-container">
+                        <div class="chat-messages" id="chat-messages"></div>
+                        <div class="chat-input">
+                            <input type="text" id="chat-input" placeholder="Ask a question..." maxlength="2000">
+                            <button onclick="sendChatMessage()">Send</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-panel" data-feature="progress">
+                    <h2>Learning Progress</h2>
+                    <div class="progress-stats" id="progress-stats">
+                        <div class="skeleton-loader"></div>
+                    </div>
+                    <button onclick="loadProgress()" class="refresh-btn">Refresh Progress</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
