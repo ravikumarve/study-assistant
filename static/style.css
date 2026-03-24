@@ -7,6 +7,12 @@
     --c-border: #2e3244;
     --c-text: #e8eaf0;
     --c-text-muted: #8b92a9;
+    
+    /* Glassmorphism effects */
+    --glass-bg: rgba(26, 29, 39, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-blur: blur(20px);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 /* Light theme */
@@ -17,6 +23,12 @@
     --c-border: #d8dce8;
     --c-text: #1a1d27;
     --c-text-muted: #6b7080;
+    
+    /* Glassmorphism effects for light theme */
+    --glass-bg: rgba(255, 255, 255, 0.8);
+    --glass-border: rgba(0, 0, 0, 0.1);
+    --glass-blur: blur(20px);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 /* Light theme */
@@ -38,7 +50,8 @@
 
 body {
     font-family: var(--font-body);
-    background: var(--c-bg);
+    background: linear-gradient(135deg, var(--c-bg) 0%, var(--c-surface) 100%);
+    background-attachment: fixed;
     color: var(--c-text);
     line-height: 1.6;
     transition: background-color var(--ease-base), color var(--ease-base);
@@ -52,12 +65,14 @@ body {
 
 /* Header */
 .header {
-    background: var(--c-surface);
-    border-bottom: 1px solid var(--c-border);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border-bottom: 1px solid var(--glass-border);
     padding: var(--sp-md) var(--sp-xl);
     position: sticky;
     top: 0;
     z-index: 100;
+    box-shadow: var(--glass-shadow);
 }
 
 .header-content {
@@ -248,11 +263,13 @@ button:active {
 
 /* Result containers */
 .result-container {
-    background: var(--c-surface);
-    border: 1px solid var(--c-border);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
     border-radius: var(--r-lg);
     padding: var(--sp-xl);
     margin-top: var(--sp-lg);
+    box-shadow: var(--glass-shadow);
 }
 
 .flashcards-container {
@@ -287,8 +304,9 @@ button:active {
     width: 100%;
     height: 100%;
     backface-visibility: hidden;
-    background: var(--c-surface);
-    border: 1px solid var(--c-border);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
     border-radius: var(--r-md);
     padding: var(--sp-lg);
     display: flex;
@@ -307,10 +325,12 @@ button:active {
     display: flex;
     flex-direction: column;
     height: 600px;
-    background: var(--c-surface);
-    border: 1px solid var(--c-border);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
     border-radius: var(--r-lg);
     overflow: hidden;
+    box-shadow: var(--glass-shadow);
 }
 
 .chat-messages {
@@ -384,9 +404,10 @@ button:active {
 .toast {
     padding: var(--sp-md) var(--sp-lg);
     border-radius: var(--r-md);
-    background: var(--c-surface);
-    border: 1px solid var(--c-border);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
     animation: slideInRight var(--ease-base);
     display: flex;
     align-items: center;
@@ -444,11 +465,13 @@ button:active {
 }
 
 .stat-card {
-    background: var(--c-surface);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
     padding: var(--sp-lg);
     border-radius: var(--r-md);
-    border: 1px solid var(--c-border);
+    border: 1px solid var(--glass-border);
     text-align: center;
+    box-shadow: var(--glass-shadow);
 }
 
 .stat-value {
@@ -548,4 +571,177 @@ button:active {
 
 .mb-lg {
     margin-bottom: var(--sp-lg);
+}
+
+/* Copy button styles */
+.copy-btn-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: var(--sp-md);
+}
+
+.copy-btn {
+    padding: var(--sp-sm) var(--sp-md);
+    background: var(--c-surface-2);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-sm);
+    color: var(--c-text);
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all var(--ease-base);
+    display: flex;
+    align-items: center;
+    gap: var(--sp-xs);
+}
+
+.copy-btn:hover {
+    background: var(--c-accent);
+    color: white;
+    border-color: var(--c-accent);
+}
+
+/* Metadata badges */
+.confidence-badge,
+.study-time-badge,
+.hours-badge,
+.success-badge,
+.time-badge,
+.density-badge,
+.score-badge,
+.approach-badge,
+.complexity-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--sp-xs) var(--sp-sm);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--r-sm);
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-left: var(--sp-sm);
+    box-shadow: var(--glass-shadow);
+}
+
+.confidence-badge {
+    background: linear-gradient(135deg, var(--c-success), var(--c-info));
+    color: white;
+}
+
+.study-time-badge,
+.hours-badge,
+.time-badge {
+    background: linear-gradient(135deg, var(--c-info), var(--c-accent));
+    color: white;
+}
+
+.success-badge {
+    background: linear-gradient(135deg, var(--c-success), #27ae60);
+    color: white;
+}
+
+.score-badge {
+    background: linear-gradient(135deg, var(--c-warning), var(--c-accent));
+    color: white;
+}
+
+.density-badge.high {
+    background: var(--c-error);
+    color: white;
+}
+
+.density-badge.medium {
+    background: var(--c-warning);
+    color: white;
+}
+
+.density-badge.low {
+    background: var(--c-success);
+    color: white;
+}
+
+.complexity-badge.beginner {
+    background: var(--c-success);
+    color: white;
+}
+
+.complexity-badge.intermediate {
+    background: var(--c-warning);
+    color: white;
+}
+
+.complexity-badge.advanced {
+    background: var(--c-error);
+    color: white;
+}
+
+/* Header layouts for metadata */
+.explanation-header,
+.quiz-header,
+.flashcards-header,
+.study-plan-header,
+.mind-map-header,
+.summary-header {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-sm);
+    margin-bottom: var(--sp-md);
+    flex-wrap: wrap;
+}
+
+/* Mermaid diagram styling */
+.mermaid-diagram {
+    background: var(--c-surface);
+    border-radius: var(--r-md);
+    padding: var(--sp-md);
+    margin-bottom: var(--sp-md);
+    border: 1px solid var(--c-border);
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mind-map-json {
+    margin-top: var(--sp-md);
+}
+
+.mind-map-json details {
+    background: var(--c-surface-2);
+    border-radius: var(--r-sm);
+    padding: var(--sp-sm);
+    border: 1px solid var(--c-border);
+}
+
+.mind-map-json summary {
+    cursor: pointer;
+    font-weight: 500;
+    padding: var(--sp-xs) 0;
+}
+
+.mind-map-json pre {
+    background: var(--c-bg);
+    padding: var(--sp-md);
+    border-radius: var(--r-sm);
+    margin-top: var(--sp-sm);
+    overflow-x: auto;
+    font-size: 0.9rem;
+}
+
+/* Day headers in study plan */
+.day-header {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-sm);
+    margin-bottom: var(--sp-sm);
+}
+
+.day-hours {
+    background: var(--c-accent);
+    color: white;
+    padding: var(--sp-xs) var(--sp-sm);
+    border-radius: var(--r-sm);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
 }

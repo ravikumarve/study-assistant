@@ -533,9 +533,18 @@ function renderSummary(data) {
     const container = document.getElementById('summarize-result');
     if (!container) return;
     
+    // Create copyable content
+    const copyContent = `Summary: ${data.summary}\n\nKey Points:\n${data.key_points?.join('\n') || 'None'}`;
+    
     container.innerHTML = `
         <div class="summary">
-            <h3>Summary</h3>
+            <div class="summary-header">
+                <h3>Summary</h3>
+                ${data.confidence_score ? `<div class="confidence-badge">Confidence: ${data.confidence_score}%</div>` : ''}
+                ${data.estimated_reading_time ? `<div class="time-badge">Read Time: ${data.estimated_reading_time} min</div>` : ''}
+                ${data.information_density ? `<div class="density-badge">Density: ${data.information_density}</div>` : ''}
+                ${data.complexity_level ? `<div class="complexity-badge ${data.complexity_level}">${data.complexity_level}</div>` : ''}
+            </div>
             <div class="summary-content">
                 <p>${data.summary}</p>
             </div>
@@ -547,8 +556,19 @@ function renderSummary(data) {
                     </ul>
                 </div>
             ` : ''}
+            ${data.key_takeaways && data.key_takeaways.length ? `
+                <div class="key-takeaways">
+                    <h4>Key Takeaways:</h4>
+                    <ul>
+                        ${data.key_takeaways.map(takeaway => `<li>${takeaway}</li>`).join('')}
+                    </ul>
+                </div>
+            ` : ''}
         </div>
     `;
+    
+    // Add copy button after rendering
+    addCopyButton(container, copyContent);
 }
 
 function renderChatMessage(message, role) {

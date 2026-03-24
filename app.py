@@ -419,6 +419,8 @@ Please provide:
 3. 3-5 key concepts to remember
 4. 1-2 helpful analogies
 5. Common misconceptions to avoid
+6. Confidence score (0-100) based on accuracy
+7. Estimated study time in minutes for this topic
 
 Format the response as valid JSON with these exact keys:
 {{
@@ -426,12 +428,15 @@ Format the response as valid JSON with these exact keys:
   "examples": ["string1", "string2", ...],
   "key_concepts": ["string1", "string2", ...],
   "analogies": ["string1", "string2", ...],
-  "misconceptions": ["string1", "string2", ...]
+  "misconceptions": ["string1", "string2", ...],
+  "confidence_score": 85,
+  "estimated_study_time": 30,
+  "complexity_level": "beginner|intermediate|advanced"
 }}
 """
 
 QUIZ_PROMPT = """
-Create a {count}-question quiz about {topic} at {difficulty} difficulty level.
+Create a {count}-question quiz about {topic} at {极difficulty} difficulty level.
 
 For each question, provide:
 - A clear question
@@ -439,6 +444,11 @@ For each question, provide:
 - The correct answer (letter only)
 - A brief explanation
 - An optional hint
+
+Also provide:
+- Overall confidence score (0-100) for quiz accuracy
+- Estimated completion time in minutes
+- Complexity assessment
 
 Format as valid JSON with this structure:
 {{
@@ -450,7 +460,11 @@ Format as valid JSON with this structure:
       "explanation": "string",
       "hint": "string"
     }}
-  ]
+  ],
+  "confidence_score": 90,
+  "estimated_completion_time": 15,
+  "complexity_level": "beginner|intermediate|advanced",
+  "total_score": 100
 }}
 """
 
@@ -463,6 +477,11 @@ Each flashcard should have:
 - Difficulty level (easy, medium, hard)
 - Color category for organization
 
+Also provide:
+- Overall confidence score (0-100) for content accuracy
+- Estimated study time in minutes for the full set
+- Recommended study approach
+
 Format as valid JSON:
 {{
   "cards": [
@@ -472,7 +491,11 @@ Format as valid JSON:
       "difficulty": "easy|medium|hard",
       "color": "blue|green|red|purple|orange"
     }}
-  ]
+  ],
+  "confidence_score": 88,
+  "estimated_study_time": 25,
+  "study_approach": "spaced_repetition|active_recall|mixed",
+  "complexity_level": "beginner|intermediate|advanced"
 }}
 """
 
@@ -485,6 +508,12 @@ For each day, include:
 - Recommended resources
 - Time allocation suggestions
 
+Also provide:
+- Confidence score (0-100) for plan effectiveness
+- Total estimated hours for completion
+- Success probability based on typical learners
+- Prerequisite knowledge assessment
+
 Format as valid JSON:
 {{
   "plan": [
@@ -492,9 +521,15 @@ Format as valid JSON:
       "day": 1,
       "tasks": ["string1", "string2", ...],
       "milestones": ["string1", "string2", ...],
-      "resources": ["string1", "string2", ...]
+      "resources": ["string1", "string2", ...],
+      "estimated_hours": 2
     }}
-  ]
+  ],
+  "confidence_score": 92,
+  "total_estimated_hours": 14,
+  "success_probability": 85,
+  "prerequisite_level": "beginner|intermediate|advanced",
+  "complexity_level": "beginner|intermediate|advanced"
 }}
 """
 
@@ -506,6 +541,8 @@ Include:
 - Main branches with labels and colors
 - Sub-branches with children
 - Logical organization
+- Confidence score (0-100) based on knowledge accuracy
+- Estimated study time in minutes
 
 Format as valid JSON:
 {{
@@ -516,7 +553,10 @@ Format as valid JSON:
       "color": "blue|green|red|purple|orange|yellow",
       "children": ["string1", "string2", ...]
     }}
-  ]
+  ],
+  "confidence_score": 85,
+  "estimated_study_time": 45,
+  "complexity_level": "beginner|intermediate|advanced"
 }}
 """
 
@@ -529,12 +569,21 @@ Provide:
 - Concise summary
 - Key points
 - Format used
+- Confidence score (0-100) for summary accuracy
+- Estimated reading time in minutes
+- Information density assessment
+- Key takeaways
 
 Format as valid JSON:
 {{
   "summary": "string",
   "key_points": ["string1", "string2", ...],
-  "format_used": "bullet|paragraph|outline|cornell"
+  "format_used": "bullet|paragraph|outline|cornell",
+  "confidence_score": 95,
+  "estimated_reading_time": 5,
+  "information_density": "high|medium|low",
+  "key_takeaways": ["string1", "string2", ...],
+  "complexity_level": "beginner|intermediate|advanced"
 }}
 """
 

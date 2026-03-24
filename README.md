@@ -61,12 +61,16 @@ A privacy-first, offline-capable AI learning platform built with Flask and vanil
 | 📝 Interactive Quizzes | Customized quizzes with multiple difficulty levels | ✅ Complete |
 | 🎴 Smart Flashcards | Intelligent flashcards with spaced repetition | ✅ Complete |
 | 📅 Study Plans | Personalized study schedules and timelines | ✅ Complete |
-| 🧠 Mind Maps | Visual concept mapping and organization | ✅ Complete |
+| 🧠 Mind Maps | **Visual concept mapping with Mermaid.js diagrams** | ✅ Enhanced |
 | 📋 Note Summarization | Automatic summarization of study notes | ✅ Complete |
 | 💬 AI Chat | Conversational learning assistant | ✅ Complete |
 | 📊 Progress Tracking | Detailed learning analytics and statistics | ✅ Complete |
 | 🔒 Privacy First | Local AI processing, no data leaves your device | ✅ Complete |
 | 🐳 Docker Support | Containerized deployment with Docker | ✅ Complete |
+| 📋 Copy to Clipboard | **One-click copy for all AI-generated content** | ✅ New |
+| 🎯 Confidence Scores | **AI confidence ratings for content accuracy** | ✅ New |
+| ⏱️ Study Time Estimates | **Estimated learning time for each topic** | ✅ New |
+| 🎨 Glassmorphism UI | **Modern glass design with visual effects** | ✅ New |
 
 ## 📸 Screenshot Gallery
 
@@ -171,6 +175,14 @@ Mobile view activated... 📱
 - Production environment configuration
 - Comprehensive testing verification
 
+### ✅ Phase 5 Complete - Enhanced User Experience
+- Glassmorphism UI design implementation
+- Copy to clipboard functionality for all AI content
+- Mermaid.js integration for visual mind maps
+- Enhanced AI responses with confidence scores and study time estimates
+- Metadata badges for confidence, time, and complexity levels
+- Comprehensive CSS styling for new UI components
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -248,6 +260,11 @@ The web app provides a clean, intuitive interface with:
 - Real-time progress tracking
 - Toast notifications
 - Smooth animations
+- **Glassmorphism design effects**
+- **One-click copy to clipboard**
+- **Visual mind maps with Mermaid.js**
+- **Confidence score badges**
+- **Study time estimates**
 
 ### API Endpoints
 
