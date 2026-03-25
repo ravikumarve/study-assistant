@@ -1,4 +1,4 @@
-# Contributing to Advanced AI Study Assistant Pro
+# Contributing to StudyMind
 
 🎉 Thank you for considering contributing to this project! We welcome contributions from everyone.
 
@@ -42,8 +42,8 @@
 
 1. **Clone repository**
    ```bash
-   git clone https://github.com/ravikumarve/study-assistant.git
-   cd study-assistant
+   git clone https://极github.com/ravikumarve/studymind.git
+   cd studymind
    ```
 
 2. **Set up Python environment**

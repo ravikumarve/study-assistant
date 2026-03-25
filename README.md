@@ -1,4 +1,4 @@
-# Advanced AI Study Assistant Pro
+# StudyMind
 
 <div align="center">
 
@@ -11,7 +11,7 @@
                                                                      
 ```
 
-**Advanced AI Study Assistant Pro - Privacy-First Learning Platform**
+**StudyMind - Privacy-First Learning Platform**
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![Flask](https://img.shields.io/badge/Flask-2.3%2B-green)
@@ -43,7 +43,7 @@
     ║      +  📚  =  🎯            ║
     ║         🤖                   ║
     ║                              ║
-    ║   ADVANCED AI STUDY ASSISTANT║
+    ║          STUDYMIND           ║
     ╚══════════════════════════════╝
 ```
 
@@ -90,8 +90,8 @@ A privacy-first, offline-capable AI learning platform built with Flask and vanil
 
 ```bash
 # See it in action (requires Ollama)
-git clone https://github.com/ravikumarve/study-assistant.git
-cd study-assistant
+git clone https://github.com/ravikumarve/studymind.git
+cd studymind
 ./deploy.sh
 # Open http://localhost:5000
 ```
@@ -247,7 +247,7 @@ curl http://localhost:8001/api/health
 curl http://localhost:8001/api/ollama/status
 
 # Test database (after starting app)
-sqlite3 study_assistant.db ".tables"
+sqlite3 studymind.db ".tables"
 ```
 
 ## 🎯 Usage
@@ -347,7 +347,7 @@ PORT=5000
 SECRET_KEY=your-secret-key-here
 
 # Database
-DATABASE=study_assistant.db
+DATABASE=studymind.db
 
 # Ollama
 OLLAMA_URL=http://localhost:11434
@@ -411,14 +411,10 @@ pytest tests/ -q
 
 ```bash
 # Explore database
-sqlite3 study_assistant.db ".tables"
-sqlite3 study_assistant.db "SELECT * FROM cache LIMIT 5;"
-
-# Clean expired cache
-sqlite3 study_assistant.db "DELETE FROM cache WHERE expires_at < datetime('now');"
-
-# Reset database
-rm study_assistant.db && python app.py
+sqlite3 studymind.db ".tables"
+sqlite3 studymind.db "SELECT * FROM cache LIMIT 5;"
+sqlite3 studymind.db "DELETE FROM cache WHERE expires_at < datetime('now');"
+rm studymind.db && python app.py
 ```
 
 ## 🤖 Ollama Integration
@@ -584,4 +580,4 @@ For issues and questions:
 
 ---
 
-**Advanced AI Study Assistant Pro** - Your private, intelligent learning companion.
+**StudyMind** - Your private, intelligent learning companion.

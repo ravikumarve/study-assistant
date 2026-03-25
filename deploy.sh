@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Study Assistant Deployment Script
+# StudyMind Deployment Script
 set -e
 
-echo "🚀 Deploying Advanced AI Study Assistant Pro"
+echo "🚀 Deploying StudyMind"
 
 # Check if Docker is installed
 if ! command -v docker &> /dev/null; then

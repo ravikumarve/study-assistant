@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Monitoring script for Study Assistant
+# Monitoring script for StudyMind
 
-echo "📊 Study Assistant Monitoring"
+echo "📊 StudyMind Monitoring"
 echo "=============================="
 
 # Check if containers are running
@@ -36,8 +36,8 @@ fi
 # Database status
 echo ""
 echo "💾 Database Status:"
-if [ -f "data/study_assistant.db" ]; then
-    size=$(du -h "data/study_assistant.db" | cut -f1)
+if [ -f "data/studymind.db" ]; then
+    size=$(du -h "data/studymind.db" | cut -f1)
     echo "✅ Database file exists ($size)"
 else
     echo "❌ Database file not found"
@@ -46,4 +46,4 @@ fi
 # Show logs
 echo ""
 echo "📋 Recent logs:"
-docker-compose logs --tail=10 study-assistant
+docker-compose logs --tail=10 studymind

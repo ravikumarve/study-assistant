@@ -9,7 +9,7 @@
     ║      +  📚  =  🎯            ║
     ║         🤖                   ║
     ║                              ║
-    ║   ADVANCED AI STUDY ASSISTANT║
+    ║          STUDYMIND           ║
     ╚══════════════════════════════╝
 ```
 

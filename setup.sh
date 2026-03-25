@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Advanced AI Study Assistant Pro Setup Script
+# StudyMind Setup Script
 
-echo "Setting up Advanced AI Study Assistant Pro..."
+echo "Setting up StudyMind..."
 
 # Check Python version
 python3 --version

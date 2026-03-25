@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Advanced AI Study Assistant Pro
+StudyMind
 Flask application with SQLite database, caching, and Ollama integration.
 """
 
@@ -38,7 +38,7 @@ OLLAMA_TIMEOUT = int(os.getenv("OLLAMA_TIMEOUT", "90"))
 OLLAMA_MAX_RETRIES = 2
 CACHE_TTL_HOURS = int(os.getenv("CACHE_TTL_HOURS", "24"))
 RATE_LIMIT_PER_MINUTE = int(os.getenv("RATE_LIMIT_PER_MINUTE", "30"))
-DATABASE_URL = os.getenv("DATABASE", "study_assistant.db")
+DATABASE_URL = os.getenv("DATABASE", "studymind.db")
 
 # Create Flask application
 app = Flask(__name__)
@@ -49,6 +49,17 @@ app.config["TESTING"] = os.getenv("FLASK_DEBUG", "false").lower() == "true"
 @app.route("/")
 def serve_index():
     return app.send_static_file("index.html")
+
+
+# Serve static files from root paths
+@app.route("/style.css")
+def serve_css():
+    return app.send_static_file("style.css")
+
+
+@app.route("/script.js")
+def serve_js():
+    return app.send_static_file("script.js")
 
 
 # Custom exceptions

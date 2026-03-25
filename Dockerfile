@@ -33,7 +33,7 @@ HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
 # Environment variables
 ENV FLASK_DEBUG=false
 ENV PORT=5000
-ENV DATABASE=/data/study_assistant.db
+ENV DATABASE=/data/studymind.db
 ENV OLLAMA_URL=http://host.docker.internal:11434
 ENV OLLAMA_MODEL=deepseek-r1:7b
 ENV OLLAMA_TIMEOUT=90

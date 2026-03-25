@@ -2,11 +2,11 @@
 
 ## Thread 1: Announcement
 
-🎉 Just launched Advanced AI Study Assistant Pro! 
+🎉 Just launched StudyMind! 
 
 A privacy-first, offline-capable learning platform that keeps your data local. No cloud calls, no data collection - just pure learning power on your own machine.
 
-🔗 https://github.com/ravikumarve/study-assistant
+🔗 https://github.com/ravikumarve/studymind
 
 #AI #Education #Privacy #OpenSource
 
@@ -44,8 +44,8 @@ Perfect for students, researchers, and privacy-conscious learners!
 🌟 Try it out! 
 
 ```bash
-git clone https://github.com/ravikumarve/study-assistant.git
-cd study-assistant
+git clone https://github.com/ravikumarve/studymind.git
+cd studymind
 ./deploy.sh
 ```
 

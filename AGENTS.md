@@ -1,4 +1,4 @@
-# AGENTS.md — Advanced AI Study Assistant Pro
+# AGENTS.md — StudyMind
 ## Coding Intelligence File for opencode + DeepSeek
 
 > **This file is the authoritative runtime spec for all AI coding agents.**
@@ -8,7 +8,7 @@
 
 ## 🧠 AGENT IDENTITY & OPERATING CONTEXT
 
-**Project:** Advanced AI Study Assistant Pro  
+**Project:** StudyMind  
 **Type:** Full-stack Flask + Vanilla JS single-page web application  
 **Runtime:** opencode with DeepSeek V3 (`deepseek-chat`) or DeepSeek R1 (`deepseek-reasoner`)  
 **Machine profile:** CPU-only Linux (WSL or native), modest RAM, no GPU assumed
@@ -41,11 +41,11 @@ You are building and maintaining a **privacy-first, offline-capable AI learning 
 Maintain this exact layout. Never create files outside this tree without explicit instruction.
 
 ```
-advanced-study-assistant/
+studymind/
 │
 ├── app.py                        # Flask application — single backend file (primary target)
 ├── requirements.txt              # Pinned Python dependencies
-├── study_assistant.db            # SQLite database — auto-created on first run
+├── studymind.db                  # SQLite database — auto-created on first run
 ├── .env.example                  # Environment variable template — commit this
 ├── .env                          # Local secrets — NEVER commit
 ├── setup.sh                      # One-command bootstrap script
@@ -81,7 +81,7 @@ advanced-study-assistant/
 | `static/script.js` | Agent — primary frontend target |
 | `static/style.css` | Agent — primary style target |
 | `static/index.html` | Agent — modify only for structural HTML changes |
-| `study_assistant.db` | Runtime only — never commit, never read in tests |
+| `studymind.db` | Runtime only — never commit, never read in tests |
 | `.env` | Human only — agent writes `.env.example` |
 | `IMPROVEMENTS.md` | Human only — never touch |
 | `setup.sh` | Agent can update when new deps added |
@@ -738,11 +738,11 @@ OLLAMA_MOCK=true pytest tests/ -q       # Mock mode (no Ollama needed)
 
 ### Database
 ```bash
-sqlite3 study_assistant.db ".tables"
-sqlite3 study_assistant.db "SELECT key, expires_at FROM cache ORDER BY created_at DESC LIMIT 10;"
-sqlite3 study_assistant.db "SELECT topic, activity, score FROM user_progress ORDER BY created_at DESC LIMIT 20;"
-sqlite3 study_assistant.db "DELETE FROM cache WHERE expires_at < datetime('now');"
-rm study_assistant.db && python app.py  # Full reset
+sqlite3 studymind.db ".tables"
+sqlite3 studymind.db "SELECT key, expires_at FROM cache ORDER BY created_at DESC LIMIT 10;"
+sqlite3 studymind.db "SELECT topic, activity, score FROM user_progress ORDER BY created_at DESC LIMIT 20;"
+sqlite3 stud极ymind.db "DELETE FROM cache WHERE expires_at < datetime('now');"
+rm studymind.db && python app.py  # Full reset
 ```
 
 ### Ollama
@@ -767,7 +767,7 @@ PORT=5000
 SECRET_KEY=change-this-in-production   # Used for session signing
 
 # Database
-DATABASE=study_assistant.db            # Use ':memory:' in tests
+DATABASE=studymind.db                  # Use ':memory:' in tests
 
 # Ollama
 OLLAMA_URL=http://localhost:11434
@@ -891,4 +891,4 @@ Before marking any task complete:
 
 *Single source of truth for all AI coding agents on this project.*
 *Target runtime: opencode + DeepSeek R1 (`deepseek-reasoner`) / DeepSeek V3 (`deepseek-chat`)*
-*Project: Advanced AI Study Assistant Pro v2.0*
+*Project: StudyMind v2.0*
