@@ -26,7 +26,10 @@ function initApp() {
     
     // Set up event listeners
     setupEventListeners();
-    
+
+    // Set up enhanced interactions
+    setupEnhancedInteractions();
+
     // Load progress if needed
     if (AppState.currentFeature === 'progress') {
         loadProgress();
@@ -666,5 +669,110 @@ function renderProgressStats(data) {
     `;
 }
 
-// Initialize app when DOM is loaded
+// Enhanced interactive behaviors
+function setupEnhancedInteractions() {
+    // Add ripple effect to buttons
+    document.addEventListener('click', function(e) {
+        const button = e.target.closest('button, .btn, .nav-item');
+        if (button) {
+            createRippleEffect(e, button);
+        }
+    });
+
+    // Add keyboard navigation
+    document.addEventListener('keydown', handleKeyboardNavigation);
+
+    // Add touch feedback for mobile
+    document.addEventListener('touchstart', addTouchFeedback, { passive: true });
+    document.addEventListener('touchend', removeTouchFeedback, { passive: true });
+
+    // Reduced motion preference
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('reduced-motion');
+    }
+
+    // High contrast mode
+    if (window.matchMedia('(prefers-contrast: high)').matches) {
+        document.documentElement.classList.add('high-contrast');
+    }
+}
+
+function createRippleEffect(event, element) {
+    const circle = document.createElement('span');
+    const diameter = Math.max(element.clientWidth, element.clientHeight);
+    const radius = diameter / 2;
+
+    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.left = `${event.clientX - element.offsetLeft - radius}px`;
+    circle.style.top = `${event.clientY - element.offsetTop - radius}px`;
+    circle.classList.add('ripple');
+
+    // Remove previous ripples
+    const existingRipples = element.querySelectorAll('.ripple');
+    existingRipples.forEach(ripple => ripple.remove());
+
+    element.appendChild(circle);
+
+    // Remove ripple after animation
+    setTimeout(() => circle.remove(), 600);
+}
+
+function handleKeyboardNavigation(event) {
+    // Tab navigation with visual focus indicators
+    if (event.key === 'Tab') {
+        document.documentElement.classList.add('keyboard-navigation');
+    }
+
+    // Escape key closes modals/toasts
+    if (event.key === 'Escape') {
+        const activeToasts = document.querySelectorAll('.toast.show');
+        if (activeToasts.length > 0) {
+            activeToasts[activeToasts.length - 1].remove();
+            event.preventDefault();
+        }
+    }
+
+    // Enter key activates buttons with visual feedback
+    if (event.key === 'Enter' && event.target.matches('button, .btn')) {
+        event.target.classList.add('active');
+        setTimeout(() => event.target.classList.remove('active'), 150);
+    }
+}
+
+function addTouchFeedback(event) {
+    const element = event.target.closest('button, .btn, .nav-item');
+    if (element) {
+        element.classList.add('touch-active');
+    }
+}
+
+function removeTouchFeedback(event) {
+    const element = event.target.closest('button, .btn, .nav-item');
+    if (element) {
+        element.classList.remove('touch-active');
+    }
+}
+
+// Success celebration animation
+function celebrateSuccess(element) {
+    if (!element) return;
+    
+    element.classList.add('celebrate');
+    setTimeout(() => element.classList.remove('celebrate'), 600);
+}
+
+// Smooth scroll to element
+function smoothScrollTo(element, offset = 0) {
+    if (!element) return;
+    
+    const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+    const offsetPosition = elementPosition - offset;
+
+    window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+    });
+}
+
+// Initialize enhanced interactions when DOM is loaded
 document.addEventListener('DOMContentLoaded', initApp);

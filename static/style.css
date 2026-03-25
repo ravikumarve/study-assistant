@@ -17,6 +17,16 @@
     --glass-border: rgba(255, 255, 255, 0.1);
     --glass-blur: blur(20px);
     --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    
+    /* Micro-interactions */
+    --hover-lift: translateY(-2px);
+    --hover-scale: scale(1.02);
+    --active-scale: scale(0.98);
+    --transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+    
+    /* Motion easing curves */
+    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-elastic: cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
 /* Light theme */
@@ -33,11 +43,11 @@
     --glass-border: rgba(0, 0, 0, 0.1);
     --glass-blur: blur(20px);
     --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    
+    /* Micro-interactions (light theme) */
+    --hover-lift: translateY(-1px);
+    --hover-scale: scale(1.01);
 }
-
-/* Light theme */
-[data-theme="light"] {
-    --c-bg: #f4f6fb;
     --c-surface: #ffffff;
     --c-surface-2: #eef0f7;
     --c-border: #d8dce8;
@@ -834,5 +844,242 @@ button:active {
         min-width: 300px;
         margin: var(--sp-sm);
     }
+}
+
+/* Enhanced Micro-interactions and Animations */
+
+/* Button hover effects */
+button, .btn, .nav-item, .theme-toggle, .provider-toggle {
+    transition: all var(--ease-base);
+    transform-origin: center;
+}
+
+button:hover, .btn:hover, .nav-item:hover, .theme-toggle:hover, .provider-toggle:hover {
+    transform: var(--hover-lift) var(--hover-scale);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+button:active, .btn:active, .nav-item:active, .theme-toggle:active, .provider-toggle:active {
+    transform: var(--active-scale);
+    transition-duration: 100ms;
+}
+
+/* Enhanced focus states for accessibility */
+button:focus-visible, .btn:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+    outline: var(--focus-outline);
+    outline-offset: var(--focus-offset);
+    transform: var(--hover-lift);
+}
+
+/* Smooth transitions for all interactive elements */
+.input-group > *,
+.result-container,
+.feature-panel,
+.toast,
+.flashcard,
+.progress-card {
+    transition: all var(--ease-base);
+}
+
+/* Loading animation enhancements */
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.skeleton {
+    animation: shimmer 2s infinite linear;
+    background: linear-gradient(
+        90deg,
+        var(--c-surface) 25%,
+        var(--c-surface-2) 50%,
+        var(--c-surface) 75%
+    );
+    background-size: 200% 100%;
+}
+
+/* Pulse animation for new content */
+@keyframes gentle-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+@keyframes slide-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Apply animations to dynamic content */
+.result-container > *,
+.flashcards-grid > *,
+.progress-grid > *,
+.toast {
+    animation: slide-in-up 0.6s var(--ease-bounce);
+}
+
+.feature-panel {
+    animation: fade-in 0.4s var(--ease-base);
+}
+
+/* Success celebration animation */
+@keyframes celebrate {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.celebrate {
+    animation: celebrate 0.6s var(--ease-bounce);
+}
+
+/* Enhanced touch feedback for mobile */
+@media (hover: none) {
+    button:hover, .btn:hover, .nav-item:hover {
+        transform: none;
+    }
+    
+    button:active, .btn:active, .nav-item:active {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    :root {
+        --c-border: currentColor;
+        --glass-border: currentColor;
+    }
+    
+    .header {
+        border-bottom-width: 2px;
+    }
+    
+    button, .btn {
+        border: 2px solid currentColor;
+    }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--c-surface);
+    border-radius: var(--r-lg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--c-border);
+    border-radius: var(--r-lg);
+    border: 2px solid var(--c-surface);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--c-accent);
+}
+
+/* Ripple effect */
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: scale(0);
+    animation: ripple-animation 0.6s linear;
+    pointer-events: none;
+}
+
+@keyframes ripple-animation {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Touch feedback states */
+.touch-active {
+    opacity: 0.7 !important;
+}
+
+.keyboard-navigation *:focus-visible {
+    outline: 3px solid var(--c-accent) !important;
+    outline-offset: 2px !important;
+}
+
+/* Enhanced focus states for custom elements */
+.glass-panel:focus-within,
+.flashcard:focus-within,
+.progress-card:focus-within {
+    box-shadow: 0 0 0 3px var(--c-accent);
+}
+
+/* Loading state enhancements */
+.loading-overlay.show {
+    animation: fade-in 0.3s ease;
+}
+
+.loading-overlay.hide {
+    animation: fade-out 0.3s ease;
+}
+
+@keyframes fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* Success state visual feedback */
+.success-state {
+    border: 2px solid var(--c-success) !important;
+    box-shadow: 0 0 20px rgba(46, 204, 113, 0.3) !important;
+}
+
+/* Error state visual feedback */
+.error-state {
+    border: 2px solid var(--c-error) !important;
+    box-shadow: 0 0 20px rgba(231, 76, 60, 0.3) !important;
+}
+
+/* Utility classes for interactive states */
+.animate-on-hover:hover {
+    transform: var(--hover-lift) var(--hover-scale);
+    transition: transform var(--ease-bounce);
+}
+
+.animate-on-click:active {
+    transform: var(--active-scale);
+    transition: transform 100ms ease;
+}
+
+/* Focus management for screen readers */
+.sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
 }
 }
