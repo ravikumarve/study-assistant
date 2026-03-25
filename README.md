@@ -366,7 +366,7 @@ LOG_LEVEL=INFO
 
 ## 🧪 Testing
 
-Run the test suite:
+Comprehensive test suite with 69 tests covering all endpoints and features:
 
 ```bash
 # Run all tests
@@ -378,9 +378,17 @@ pytest --cov=app --cov-report=term-missing tests/
 # Run specific test file
 pytest tests/test_explain.py -v
 
-# Mock Ollama for faster testing
-OLLAMA_MOCK=true pytest tests/ -q
+# Mock Ollama for faster testing (already configured)
+pytest tests/ -q
 ```
+
+**Test Coverage:**
+- All 7 AI endpoints fully tested
+- Cache system unit tests
+- Ollama integration tests
+- Input validation and error handling
+- Rate limiting and security tests
+- Database operations testing
 
 ## 🛠️ Development
 

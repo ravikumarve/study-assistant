@@ -442,7 +442,7 @@ Format the response as valid JSON with these exact keys:
 """
 
 QUIZ_PROMPT = """
-Create a {count}-question quiz about {topic} at {极difficulty} difficulty level.
+Create a {count}-question quiz about {topic} at {difficulty} difficulty level.
 
 For each question, provide:
 - A clear question
@@ -1028,7 +1028,7 @@ def create_app(config=None):
             new_app.add_url_rule(
                 rule.rule,
                 endpoint=rule.endpoint,
-                view_func=极view_func,
+                view_func=view_func,
                 methods=rule.methods,
             )
 
