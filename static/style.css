@@ -8,6 +8,10 @@
     --c-text: #e8eaf0;
     --c-text-muted: #8b92a9;
     
+    /* Accessibility focus */
+    --focus-outline: 2px solid var(--c-accent);
+    --focus-offset: 2px;
+    
     /* Glassmorphism effects */
     --glass-bg: rgba(26, 29, 39, 0.8);
     --glass-border: rgba(255, 255, 255, 0.1);
@@ -229,7 +233,8 @@ input, select, textarea {
 }
 
 input:focus, select:focus, textarea:focus {
-    outline: none;
+    outline: 2px solid var(--c-accent);
+    outline-offset: 2px;
     border-color: var(--c-accent);
     box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
 }
@@ -743,5 +748,91 @@ button:active {
     border-radius: var(--r-sm);
     font-size: 0.8rem;
     font-weight: 500;
+}
+
+/* Screen reader only utility */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Focus styles for keyboard navigation */
+*:focus-visible {
+    outline: var(--focus-outline);
+    outline-offset: var(--focus-offset);
+}
+
+/* Fallback for browsers that don't support :focus-visible */
+*:focus {
+    outline: var(--focus-outline);
+    outline-offset: var(--focus-offset);
+}
+
+/* Remove outline for mouse users on elements that support :focus-visible */
+*:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* High contrast support */
+@media (prefers-contrast: high) {
+    :root {
+        --c-border: #ffffff;
+        --focus-outline: 3px solid #ffffff;
+    }
+}
+
+/* Browser compatibility fixes */
+@supports not (backdrop-filter: blur(10px)) {
+    .header,
+    .toast,
+    .glass-panel,
+    .flashcard,
+    .progress-card,
+    .mind-map-container {
+        background: var(--c-surface) !important;
+        backdrop-filter: none !important;
+    }
+}
+
+@supports not (gap: 1px) {
+    .nav-items,
+    .header-content,
+    .input-group,
+    .flashcards-grid,
+    .progress-grid {
+        margin: -4px;
+    }
+    
+    .nav-items > *,
+    .header-content > *,
+    .input-group > *,
+    .flashcards-grid > *,
+    .progress-grid > * {
+        margin: 4px;
+    }
+}
+
+/* Flexbox fallback for grid */
+@supports not (grid-template-columns: 1fr) {
+    .flashcards-grid,
+    .progress-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .flashcards-grid > *,
+    .progress-grid > * {
+        flex: 1;
+        min-width: 300px;
+        margin: var(--sp-sm);
+    }
 }
 }

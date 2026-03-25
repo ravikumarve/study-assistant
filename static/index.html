@@ -33,36 +33,36 @@
             <!-- Navigation -->
             <nav class="sidebar">
                 <div class="nav-items">
-                    <button class="nav-item active" data-feature="explain" onclick="setActiveFeature('explain')">
-                        <span class="nav-icon">📚</span>
+                    <button class="nav-item active" data-feature="explain" onclick="setActiveFeature('explain')" aria-current="page">
+                        <span class="nav-icon" aria-hidden="true">📚</span>
                         Explain
                     </button>
                     <button class="nav-item" data-feature="quiz" onclick="setActiveFeature('quiz')">
-                        <span class="nav-icon">❓</span>
+                        <span class="nav-icon" aria-hidden="true">❓</span>
                         Quiz
                     </button>
                     <button class="nav-item" data-feature="flashcards" onclick="setActiveFeature('flashcards')">
-                        <span class="nav-icon">🔖</span>
+                        <span class="nav-icon" aria-hidden="true">🔖</span>
                         Flashcards
                     </button>
                     <button class="nav-item" data-feature="study-plan" onclick="setActiveFeature('study-plan')">
-                        <span class="nav-icon">📅</span>
+                        <span class="nav-icon" aria-hidden="true">📅</span>
                         Study Plan
                     </button>
                     <button class="nav-item" data-feature="mind-map" onclick="setActiveFeature('mind-map')">
-                        <span class="nav-icon">🧭</span>
+                        <span class="nav-icon" aria-hidden="true">🧭</span>
                         Mind Map
                     </button>
                     <button class="nav-item" data-feature="summarize" onclick="setActiveFeature('summarize')">
-                        <span class="nav-icon">📝</span>
+                        <span class="nav-icon" aria-hidden="true">📝</span>
                         Summarize
                     </button>
                     <button class="nav-item" data-feature="chat" onclick="setActiveFeature('chat')">
-                        <span class="nav-icon">💬</span>
+                        <span class="nav-icon" aria-hidden="true">💬</span>
                         Chat
                     </button>
                     <button class="nav-item" data-feature="progress" onclick="setActiveFeature('progress')">
-                        <span class="nav-icon">📊</span>
+                        <span class="nav-icon" aria-hidden="true">📊</span>
                         Progress
                     </button>
                 </div>
@@ -71,128 +71,199 @@
             <!-- Content Area -->
             <div class="content-area">
                 <!-- Loading Overlay -->
-                <div class="loading-overlay" id="loading-overlay">
-                    <div class="loading-spinner"></div>
+                <div class="loading-overlay" id="loading-overlay" aria-live="polite" aria-busy="true" hidden>
+                    <div class="loading-spinner" aria-hidden="true"></div>
                     <p>Generating content...</p>
                 </div>
 
                 <!-- Toast Container -->
-                <div class="toast-container" id="toast-container"></div>
+                <div class="toast-container" id="toast-container" aria-live="assertive" role="status"></div>
 
                 <!-- Feature Panels -->
                 <div class="feature-panel active" data-feature="explain">
                     <h2>Get Explanations</h2>
                     <div class="input-group">
-                        <input type="text" id="explain-topic" placeholder="Enter topic (e.g., Python programming, Calculus)" maxlength="200">
-                        <select id="explain-level">
+                        <label for="explain-topic" class="sr-only">Topic to explain</label>
+                        <input type="text" id="explain-topic" placeholder="Enter topic (e.g., Python programming, Calculus)" maxlength="200" aria-label="Topic to explain">
+                        <label for="explain-level" class="sr-only">Explanation level</label>
+                        <select id="explain-level" aria-label="Explanation difficulty level">
                             <option value="beginner">Beginner</option>
                             <option value="intermediate">Intermediate</option>
                             <option value="advanced">Advanced</option>
                         </select>
-                        <button onclick="generateExplanation()">Explain</button>
+                        <button onclick="generateExplanation()" aria-label="Generate explanation">Explain</button>
                     </div>
-                    <div class="result-container" id="explain-result"></div>
+                    <div class="result-container" id="explain-result" aria-live="polite"></div>
                 </div>
 
                 <div class="feature-panel" data-feature="quiz">
                     <h2>Generate Quiz</h2>
                     <div class="input-group">
-                        <input type="text" id="quiz-topic" placeholder="Enter topic" maxlength="200">
-                        <select id="quiz-count">
+                        <label for="quiz-topic" class="sr-only">Quiz topic</label>
+                        <input type="text" id="quiz-topic" placeholder="Enter topic" maxlength="200" aria-label="Quiz topic">
+                        <label for="quiz-count" class="sr-only">Number of questions</label>
+                        <select id="quiz-count" aria-label="Number of questions">
                             <option value="3">3 Questions</option>
                             <option value="5" selected>5 Questions</option>
                             <option value="10">10 Questions</option>
                         </select>
-                        <select id="quiz-difficulty">
+                        <label for="quiz-difficulty" class="sr-only">Quiz difficulty</label>
+                        <select id="quiz-difficulty" aria-label="Quiz difficulty level">
                             <option value="easy">Easy</option>
                             <option value="medium" selected>Medium</option>
                             <option value="hard">Hard</option>
                         </select>
-                        <button onclick="generateQuiz()">Generate Quiz</button>
+                        <button onclick="generateQuiz()" aria-label="Generate quiz">Generate Quiz</button>
                     </div>
-                    <div class="result-container" id="quiz-result"></div>
+                    <div class="result-container" id="quiz-result" aria-live="polite"></div>
                 </div>
 
                 <div class="feature-panel" data-feature="flashcards">
                     <h2>Create Flashcards</h2>
                     <div class="input-group">
-                        <input type="text" id="flashcards-topic" placeholder="Enter topic" maxlength="200">
-                        <select id="flashcards-count">
+                        <label for="flashcards-topic" class="sr-only">Flashcard topic</label>
+                        <input type="text" id="flashcards-topic" placeholder="Enter topic" maxlength="200" aria-label="Flashcard topic">
+                        <label for="flashcards-count" class="sr-only">Number of flashcards</label>
+                        <select id="flashcards-count" aria-label="Number of flashcards">
                             <option value="5">5 Cards</option>
                             <option value="10" selected>10 Cards</option>
                             <option value="15">15 Cards</option>
                             <option value="20">20 Cards</option>
                         </select>
-                        <button onclick="generateFlashcards()">Create Flashcards</button>
+                        <button onclick="generateFlashcards()" aria-label="Create flashcards">Create Flashcards</button>
                     </div>
-                    <div class="flashcards-container" id="flashcards-result"></div>
+                    <div class="flashcards-container" id="flashcards-result" aria-live="polite"></div>
                 </div>
 
                 <div class="feature-panel" data-feature="study-plan">
                     <h2>Study Plan Generator</h2>
                     <div class="input-group">
-                        <input type="text" id="study-plan-topic" placeholder="Enter topic" maxlength="200">
-                        <select id="study-plan-days">
+                        <label for="study-plan-topic" class="sr-only">Study plan topic</label>
+                        <input type="text" id="study-plan-topic" placeholder="Enter topic" maxlength="200" aria-label="Study plan topic">
+                        <label for="study-plan-days" class="sr-only">Study duration</label>
+                        <select id="study-plan-days" aria-label="Study duration in days">
                             <option value="7">7 Days</option>
                             <option value="14" selected>14 Days</option>
                             <option value="30">30 Days</option>
                         </select>
-                        <select id="study-plan-hours">
+                        <label for="study-plan-hours" class="sr-only">Hours per day</label>
+                        <select id="study-plan-hours" aria-label="Hours per day">
                             <option value="1">1 Hour/Day</option>
                             <option value="2" selected>2 Hours/Day</option>
                             <option value="4">4 Hours/Day</option>
                         </select>
-                        <button onclick="generateStudyPlan()">Generate Plan</button>
+                        <button onclick="generateStudyPlan()" aria-label="Generate study plan">Generate Plan</button>
                     </div>
-                    <div class="result-container" id="study-plan-result"></div>
+                    <div class="result-container" id="study-plan-result" aria-live="polite"></div>
                 </div>
 
                 <div class="feature-panel" data-feature="mind-map">
                     <h2>Mind Map Generator</h2>
                     <div class="input-group">
-                        <input type="text" id="mind-map-topic" placeholder="Enter topic" maxlength="200">
-                        <button onclick="generateMindMap()">Generate Mind Map</button>
+                        <label for="mind-map-topic" class="sr-only">Mind map topic</label>
+                        <input type="text" id="mind-map-topic" placeholder="Enter topic" maxlength="200" aria-label="Mind map topic">
+                        <button onclick="generateMindMap()" aria-label="Generate mind map">Generate Mind Map</button>
                     </div>
-                    <div class="result-container" id="mind-map-result"></div>
+                    <div class="result-container" id="mind-map-result" aria-live="polite"></div>
                 </div>
 
                 <div class="feature-panel" data-feature="summarize">
                     <h2>Notes Summarizer</h2>
                     <div class="input-group vertical">
-                        <textarea id="summarize-notes" placeholder="Paste your notes here..." maxlength="10000" rows="6"></textarea>
-                        <select id="summarize-format">
+                        <label for="summarize-notes" class="sr-only">Notes to summarize</label>
+                        <textarea id="summarize-notes" placeholder="Paste your notes here..." maxlength="10000" rows="6" aria-label="Notes to summarize"></textarea>
+                        <label for="summarize-format" class="sr-only">Summary format</label>
+                        <select id="summarize-format" aria-label="Summary format">
                             <option value="bullet">Bullet Points</option>
                             <option value="paragraph">Paragraph</option>
                             <option value="outline">Outline</option>
                             <option value="cornell">Cornell Notes</option>
                         </select>
-                        <button onclick="summarizeNotes()">Summarize</button>
+                        <button onclick="summarizeNotes()" aria-label="Summarize notes">Summarize</button>
                     </div>
-                    <div class="result-container" id="summarize-result"></div>
+                    <div class="result-container" id="summarize-result" aria-live="polite"></div>
                 </div>
 
                 <div class="feature-panel" data-feature="chat">
                     <h2>AI Study Assistant</h2>
                     <div class="chat-container">
-                        <div class="chat-messages" id="chat-messages"></div>
+                        <div class="chat-messages" id="chat-messages" aria-live="polite" role="log"></div>
                         <div class="chat-input">
-                            <input type="text" id="chat-input" placeholder="Ask a question..." maxlength="2000">
-                            <button onclick="sendChatMessage()">Send</button>
+                            <label for="chat-input" class="sr-only">Chat message</label>
+                            <input type="text" id="chat-input" placeholder="Ask a question..." maxlength="2000" aria-label="Chat message">
+                            <button onclick="sendChatMessage()" aria-label="Send message">Send</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="feature-panel" data-feature="progress">
                     <h2>Learning Progress</h2>
-                    <div class="progress-stats" id="progress-stats">
-                        <div class="skeleton-loader"></div>
+                    <div class="progress-stats" id="progress-stats" aria-live="polite">
+                        <div class="skeleton-loader" aria-hidden="true"></div>
                     </div>
-                    <button onclick="loadProgress()" class="refresh-btn">Refresh Progress</button>
+                    <button onclick="loadProgress()" class="refresh-btn" aria-label="Refresh progress statistics">Refresh Progress</button>
                 </div>
             </div>
         </main>
     </div>
 
+    <!-- Modern browser feature detection and basic polyfills -->
+    <script>
+        // Basic polyfill for CSS.supports if not available
+        if (!window.CSS || !CSS.supports) {
+            CSS = CSS || {};
+            CSS.supports = function(property, value) {
+                if (arguments.length === 1) {
+                    return property in document.documentElement.style;
+                }
+                if (arguments.length === 2) {
+                    var element = document.createElement('div');
+                    element.style[property] = value;
+                    return element.style[property] === value;
+                }
+                return false;
+            };
+        }
+        
+        // Check for modern JavaScript features
+        const supportsModernJS = () => {
+            try {
+                new Function('const a = 1; let b = 2; class C {}; async function f() { await x; }');
+                return true;
+            } catch {
+                return false;
+            }
+        };
+        
+        // Check for modern CSS features
+        const supportsModernCSS = () => {
+            return CSS.supports('grid-template-columns', '1fr') && 
+                   CSS.supports('backdrop-filter', 'blur(10px)') &&
+                   CSS.supports('gap', '1px');
+        };
+        
+        if (!supportsModernJS() || !supportsModernCSS()) {
+            document.body.innerHTML = '<div style="padding: 2rem; text-align: center; font-family: sans-serif;">' +
+                '<h2>Browser Compatibility Issue</h2>' +
+                '<p>This application requires a modern browser with support for:</p>' +
+                '<ul style="text-align: left; max-width: 400px; margin: 0 auto;">' +
+                '<li>ES6+ JavaScript features</li>' +
+                '<li>CSS Grid and Flexbox</li>' +
+                '<li>Modern CSS variables</li>' +
+                '</ul>' +
+                '<p>Please update your browser or try Chrome, Firefox, or Edge.</p>' +
+                '</div>';
+        }
+    </script>
+    
     <script src="script.js"></script>
+    <script>
+        // Ensure app initialization
+        if (typeof initApp === 'function') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            console.error('initApp function not found');
+        }
+    </script>
 </body>
 </html>

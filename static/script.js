@@ -63,6 +63,9 @@ function setupEventListeners() {
         });
     }
     
+    // Keyboard navigation for feature panels
+    document.addEventListener('keydown', handleKeyboardNavigation);
+    
     // Theme preference changes
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
         if (AppState.theme === 'auto') {
@@ -78,12 +81,48 @@ function toggleTheme() {
     AppState.theme = themes[(currentIndex + 1) % themes.length];
     
     localStorage.setItem('theme', AppState.theme);
-    
-    if (AppState.theme === 'auto') {
-        document.documentElement.dataset.theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    } else {
-        document.documentElement.dataset.theme = AppState.theme;
+    updateThemeUI();
+}
+
+// Keyboard navigation handler
+function handleKeyboardNavigation(e) {
+    // Tab navigation between feature panels
+    if (e.key === 'Tab' && !e.ctrlKey && !e.altKey) {
+        const features = ['explain', 'quiz', 'flashcards', 'study-plan', 'mind-map', 'summarize', 'chat', 'progress'];
+        const currentIndex = features.indexOf(AppState.currentFeature);
+        
+        if (e.shiftKey) {
+            // Shift+Tab: move to previous feature
+            const prevIndex = (currentIndex - 1 + features.length) % features.length;
+            setActiveFeature(features[prevIndex]);
+        } else {
+            // Tab: move to next feature
+            const nextIndex = (currentIndex + 1) % features.length;
+            setActiveFeature(features[nextIndex]);
+        }
+        e.preventDefault();
     }
+    
+    // Arrow key navigation for flashcards
+    if (AppState.currentFeature === 'flashcards' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+        const flashcards = document.querySelectorAll('.flashcard');
+        const currentCard = document.querySelector('.flashcard:focus-within');
+        
+        if (currentCard && flashcards.length > 1) {
+            const currentIndex = Array.from(flashcards).indexOf(currentCard);
+            let nextIndex;
+            
+            if (e.key === 'ArrowRight') {
+                nextIndex = (currentIndex + 1) % flashcards.length;
+            } else {
+                nextIndex = (currentIndex - 1 + flashcards.length) % flashcards.length;
+            }
+            
+            flashcards[nextIndex].focus();
+            e.preventDefault();
+        }
+    }
+}
     
     showToast(`Theme set to ${AppState.theme}`, 'info', 2000);
 }
