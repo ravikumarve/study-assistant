@@ -1,0 +1,22 @@
+/home/matrix/Desktop/study-assistant/app.py:231: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "DELETE FROM cache WHERE expires_at < ?", (datetime.utcnow().isoformat(),)
+ * Serving Flask app 'app'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.111:5000
+Press CTRL+C to quit
+/home/matrix/Desktop/study-assistant/app.py:397: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "timestamp": datetime.utcnow().isoformat(),
+127.0.0.1 - - [25/Mar/2026 16:07:25] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [25/Mar/2026 16:07:50] "GET /api/ollama/status HTTP/1.1" 200 -
+127.0.0.1 - - [25/Mar/2026 16:07:53] "POST /api/explain HTTP/1.1" 429 -
+/home/matrix/Desktop/study-assistant/app.py:249: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  current_time = datetime.utcnow()
+/home/matrix/Desktop/study-assistant/app.py:266: DeprecationWarning: The default datetime adapter is deprecated as of Python 3.12; see the sqlite3 documentation for suggested replacement recipes
+  conn.execute(
+127.0.0.1 - - [25/Mar/2026 16:08:20] "POST /api/explain HTTP/1.1" 503 -
+/home/matrix/Desktop/study-assistant/app.py:253: DeprecationWarning: The default datetime adapter is deprecated as of Python 3.12; see the sqlite3 documentation for suggested replacement recipes
+  conn.execute(
+127.0.0.1 - - [25/Mar/2026 16:08:32] "POST /api/explain HTTP/1.1" 503 -

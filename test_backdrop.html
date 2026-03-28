@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .glass {
+            background: rgba(26, 29, 39, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .test-result {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="glass">
+        <h2>Glassmorphism Test</h2>
+        <p>If you can see blur/transparency effects, backdrop-filter is supported.</p>
+    </div>
+    
+    <div class="test-result">
+        <h3>Backdrop-filter support:</h3>
+        <p id="support-result">Testing...</p>
+    </div>
+
+    <script>
+        // Test backdrop-filter support
+        const supportsBackdropFilter = CSS.supports('backdrop-filter', 'blur(10px)') || 
+                                     CSS.supports('-webkit-backdrop-filter', 'blur(10px)');
+        
+        document.getElementById('support-result').textContent = 
+            supportsBackdropFilter ? '✅ SUPPORTED' : '❌ NOT SUPPORTED';
+        
+        if (!supportsBackdropFilter) {
+            document.getElementById('support-result').textContent += 
+                ' - This browser does not support glassmorphism effects';
+        }
+    </script>
+</body>
+</html>

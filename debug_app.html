@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug App</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/script.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">Debug Test</h1>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="result-container">
+                <h2>Glassmorphism Test Panel</h2>
+                <p>This should have a glass effect background if CSS is working properly.</p>
+                <div id="debug-info">Loading debug information...</div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing app...');
+            
+            try {
+                initApp();
+                console.log('App initialized successfully');
+                
+                // Update debug info
+                setTimeout(() => {
+                    const debugInfo = document.getElementById('debug-info');
+                    debugInfo.innerHTML = `
+                        <strong>AppState:</strong><br>
+                        - Session Token: ${AppState.sessionToken}<br>
+                        - Theme: ${AppState.theme}<br>
+                        - Provider: ${AppState.provider}<br>
+                        - Current Feature: ${AppState.currentFeature}<br>
+                        <br>
+                        <strong>CSS Variables:</strong><br>
+                        - --glass-bg: ${getComputedStyle(document.documentElement).getPropertyValue('--glass-bg')}<br>
+                        - --glass-blur: ${getComputedStyle(document.documentElement).getPropertyValue('--glass-blur')}<br>
+                        <br>
+                        <strong>Backdrop-filter support:</strong> ${CSS.supports('backdrop-filter', 'blur(10px)') ? '✅ Yes' : '❌ No'}
+                    `;
+                }, 500);
+                
+            } catch (error) {
+                console.error('Failed to initialize app:', error);
+                document.getElementById('debug-info').textContent = 
+                    `Initialization error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>

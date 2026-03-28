@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/static/script.js"></script>
+</head>
+<body onload="initApp()">
+    <h2>JavaScript Initialization Test</h2>
+    <div id="result">Testing initialization...</div>
+    
+    <script>
+        setTimeout(() => {
+            const resultDiv = document.getElementById('result');
+            
+            // Check if AppState was initialized
+            if (typeof AppState !== 'undefined' && AppState.sessionToken) {
+                resultDiv.innerHTML = `✅ SUCCESS: App initialized<br>
+                    Session Token: ${AppState.sessionToken}<br>
+                    Theme: ${AppState.theme}<br>
+                    Provider: ${AppState.provider}`;
+            } else {
+                resultDiv.innerHTML = '❌ FAILED: AppState not initialized properly';
+                
+                // Check for errors
+                try {
+                    generateUUID();
+                    resultDiv.innerHTML += '<br>✅ generateUUID works';
+                } catch (e) {
+                    resultDiv.innerHTML += `<br>❌ generateUUID error: ${e.message}`;
+                }
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
