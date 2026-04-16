@@ -49,6 +49,9 @@ frontend.log
 # OpenCode (IDE/Tool specific)
 .opencode/
 
+# AI Agent documentation (local only)
+AGENTS.md
+
 # Test/debug HTML files
 test_*.html
 debug_*.html
