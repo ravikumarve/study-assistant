@@ -1,0 +1,75 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv/
+*.egg-info/
+dist/
+build/
+eggs/
+.eggs/
+*.egg
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Database (runtime only)
+*.db
+*.sqlite
+*.sqlite3
+studymind.db
+study_assistant.db
+
+# Logs
+*.log
+app.log
+frontend.log
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OpenCode (IDE/Tool specific)
+.opencode/
+
+# Test/debug HTML files
+test_*.html
+debug_*.html
+diagnose_*.html
+
+# Session files
+session-*.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node (if any)
+node_modules/
+package-lock.json
+bun.lock
+
+# Ruff
+.ruff_cache/
+
+# Misc
+*.bak
+*.tmp
+*.temp
