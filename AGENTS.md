@@ -889,6 +889,24 @@ Before marking any task complete:
 
 ---
 
+---
+
+## 📅 SESSION LOG
+
+### [2026-04-17] - Repository Cleanup & Documentation Update
+- **State:** Complete
+- **Actions:**
+  - Added comprehensive `.gitignore` (Python, testing, IDE, logs, databases)
+  - Removed `.opencode/agents/` from tracking (IDE-specific, 147+ files)
+  - Removed `venv/`, `__pycache__/`, `.pytest_cache/`, `.ruff_cache/`
+  - Removed test/debug HTML files and log files
+  - Renamed branch from `master` to `main`
+  - Updated README.md to Gumroad-style marketing copy
+- **Commit:** `4d0ae18`
+- **Next:** Push to remote and update GitHub default branch
+
+---
+
 *Single source of truth for all AI coding agents on this project.*
 *Target runtime: opencode + DeepSeek R1 (`deepseek-reasoner`) / DeepSeek V3 (`deepseek-chat`)*
 *Project: StudyMind v2.0*
